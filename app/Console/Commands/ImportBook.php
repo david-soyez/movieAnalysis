@@ -10,12 +10,6 @@ use App\BookLine;
 use App\Word;
 use DB;
 
-require_once(__DIR__.'/../../Includes/RootDirectory.inc.php');
-require_once(__DIR__.'/../../Includes/PolynomialRegression/PolynomialRegression.php');
-require_once(__DIR__.'/../../Includes/LinearizedRegression/ExpRegression.php');
-require_once(__DIR__.'/../../Includes/LinearizedRegression/LogRegression.php');
-require_once(__DIR__.'/../../Includes/LinearizedRegression/PowRegression.php');
-
 class ImportBook extends Command
 {
     /**
@@ -189,8 +183,55 @@ class ImportBook extends Command
         $line->count_top100 = $countTop100Words;
 
         // count the 20% pareto words
+        $wordsFrequences = BookWord::where(array('book_id'=>$book->id))->orderBy('frequence','desc')->sum('frequence'); 
+
+        // number of unique words in the book
+        $countUniqueWords = BookWord::where(array('book_id'=>$book->id))->count(); 
         
+        // how many words to get to have 20%
+        $countWords20Percent = ceil(($countUniqueWords*20)/100);
+        
+        // get the total frequence for this 20%
+        $bookWords = BookWord::where(array('book_id'=>$book->id))->orderBy('frequence','desc')->take($countWords20Percent)->get();         
+
+        $percent20words = array();
+        foreach($bookWords as $_bookWord) {
+           $percent20words[$_bookWord->word_id] = $_bookWord;
+        }
+
+        $count20PercentWords = 0;
+        foreach($lineWords as $_bookWord) {
+            if(isset($percent20words[$_bookWord->word_id])) {
+                $count20PercentWords++; 
+            } 
+        }
+
+        $line->count_pareto_20 = $count20PercentWords;
+
         // count the above 20% pareto words
+        $wordsFrequences = BookWord::where(array('book_id'=>$book->id))->orderBy('frequence','desc')->sum('frequence'); 
+
+        // number of unique words in the book
+        $countUniqueWords = BookWord::where(array('book_id'=>$book->id))->count(); 
+        
+        // how many words to get to have 20%
+        $countWords20Percent = ceil(($countUniqueWords*20)/100);
+        
+        // get the total frequence for above 20%
+        $bookWords = BookWord::where(array('book_id'=>$book->id))->orderBy('frequence','desc')->limit($countUniqueWords)->offset($countWords20Percent)->get(); 
+
+        $percentAbove20words = array();
+        foreach($bookWords as $_bookWord) {
+           $percentAbove20words[$_bookWord->word_id] = $_bookWord;
+        }
+
+        $countAbove20PercentWords = 0;
+        foreach($lineWords as $_bookWord) {
+            if(isset($percentAbove20words[$_bookWord->word_id])) {
+                $countAbove20PercentWords++; 
+            } 
+        }
+        $line->count_pareto_above_20 = $countAbove20PercentWords;
 
         // sum of top100 words
 
