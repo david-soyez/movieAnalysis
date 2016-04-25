@@ -27,10 +27,9 @@ class CreateBooksTable extends Migration
             $table->boolean('is_processed')->default(0);
             $table->string('content_filename')->nullable();
             $table->string('image_filename')->nullable();
-            $table->decimal('score',5,2)->nullable();
-            $table->decimal('book_top100',9,4)->nullable();
-            $table->decimal('book_pareto_20',9,4)->nullable();
-            $table->decimal('book_pareto_above_20',9,4)->nullable();
+            $table->decimal('book_top100',17,14)->nullable();
+            $table->decimal('book_pareto_20',17,14)->nullable();
+            $table->decimal('book_pareto_above_20',17,14)->nullable();
             $table->boolean('is_active')->default(0);
             $table->boolean('is_deleted')->default(0);
             $table->timestamps();

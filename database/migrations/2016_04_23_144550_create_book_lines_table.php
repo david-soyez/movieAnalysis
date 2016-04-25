@@ -20,9 +20,9 @@ class CreateBookLinesTable extends Migration
             $table->integer('count_top100');
             $table->integer('count_pareto_20');
             $table->integer('count_pareto_above_20');
-            $table->decimal('sum_top100',9,4)->nullable();
-            $table->decimal('sum_pareto_20',9,4)->nullable();
-            $table->decimal('sum_pareto_above_20',9,4)->nullable();
+            $table->decimal('sum_top100',17,14)->nullable();
+            $table->decimal('sum_pareto_20',17,14)->nullable();
+            $table->decimal('sum_pareto_above_20',17,14)->nullable();
             $table->index('book_id');
          });    
     }
