@@ -2,6 +2,13 @@ Book Title: {{ $book->title }}<br>
 Top 100 words: {{ round($book->book_top100,2) }}%<br>
 20% -> {{ round($book->book_pareto_20,2) }}%<br>
 +20% -> {{ round($book->book_pareto_above_20,2) }}%<br>
+Mean 20/line -> {{ round($book->getMean20(),8) }}%<br>
+Mean +20/line -> {{ round($book->getMeanAbove20(),8) }}%<br>
+Rapport mean +20/20 -> {{ round($book->getMeanAbove20()/$book->getMean20(),8) }} <br>
+Total top100 -> {{ round($book->getTotal100(),8) }}<br>
+Tota 20% -> {{ round($book->getTotal20(),8) }}<br>
+Total +20% -> {{ round($book->getTotalAbove20(),8) }}<br>
+Rapport +20/20 -> {{ round(($book->getTotalAbove20()*100)/$book->getTotal20(),9) }}
   <div id="chart_div100{{ $book->id}}" style="height:400px"></div>
       
 <script>

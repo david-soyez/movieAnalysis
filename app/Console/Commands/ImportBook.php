@@ -15,7 +15,12 @@ class ImportBook extends Command
     /*
      * Number of unique words in the book
      */
-    protected $words_count = 0;
+    protected $unique_words_count = 0;
+    
+    /*
+     * Number of totaltotal  words in the book
+     */
+    protected $total_words_count = 0;
 
     /**
      * The name and signature of the console command.
@@ -48,12 +53,12 @@ class ImportBook extends Command
      */
     public function handle()
     {
-        
+        /*
         DB::table('book_words')->truncate();
         DB::table('book_lines')->truncate();
         DB::table('words')->truncate();
         DB::table('books')->truncate();
-         
+        */ 
 
         $filename = $this->argument('filename'); 
         $language = 'en';
@@ -94,7 +99,8 @@ class ImportBook extends Command
             }
         }
         arsort($frequencies);
-        $this->words_count = $wordsFound;
+        $this->total_words_count = $wordsFound;
+        $this->unique_words_count = count($frequencies);
 
         // write the words to database
         echo "Writing words to database\n";
@@ -112,7 +118,7 @@ class ImportBook extends Command
             $bookWord->book_id = $bookObj->id;
             $bookWord->word_id = $wordObj->id;
             $bookWord->frequence = $frequence;
-            $bookWord->percentage = bcdiv(($frequence*100),$this->words_count);
+            $bookWord->percentage = bcdiv(($frequence*100),$this->total_words_count);
             $bookWord->save();
         }
         
@@ -218,7 +224,7 @@ class ImportBook extends Command
         $wordsFrequences = BookWord::where(array('book_id'=>$book->id))->orderBy('frequence','desc')->sum('frequence'); 
 
         // how many words to get 20%
-        $countWords20Percent = ceil(($this->words_count*20)/100);
+        $countWords20Percent = ceil(($this->unique_words_count*20)/100);
         
         // get the total frequence for this 20%
         $bookWords = BookWord::where(array('book_id'=>$book->id))->orderBy('frequence','desc')->take($countWords20Percent)->get();         
@@ -243,7 +249,8 @@ class ImportBook extends Command
         $wordsFrequences = BookWord::where(array('book_id'=>$book->id))->orderBy('frequence','desc')->sum('frequence'); 
 
         // get the total frequence for above 20%
-        $bookWords = BookWord::where(array('book_id'=>$book->id))->orderBy('frequence','desc')->limit($this->words_count)->offset($countWords20Percent)->get(); 
+        $bookWords = BookWord::where(array('book_id'=>$book->id))->orderBy('frequence','desc')->limit($this->unique_words_count)->offset($countWords20Percent)->get(); 
+
 
         $percentAbove20words = array();
         foreach($bookWords as $_bookWord) {

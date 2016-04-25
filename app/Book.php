@@ -40,4 +40,56 @@ class Book extends Model
        return empty($bookWord) ? null : $bookWord[0]->percentage_book_cumul;       
         
     }
+
+    /*
+     * Returns the mean value of the lines for the words above 20%
+     * @return float
+     */
+    public function getMeanAbove20() {
+        $result = DB::select('SELECT (sum(sum_pareto_above_20)/count(*)) as mean FROM paretobook.book_lines where sum_pareto_above_20 > 0 AND book_id = '.$this->id);
+
+        return empty($result) ? null : $result[0]->mean;
+    }
+
+    /*
+     * Returns the mean value of the lines for the words 20%
+     * @return float
+     */
+    public function getMean20() {
+        $result = DB::select('SELECT (sum(sum_pareto_20)/count(*)) as mean FROM paretobook.book_lines where sum_pareto_20 > 0 AND book_id = '.$this->id);
+
+        return empty($result) ? null : $result[0]->mean;
+    }
+
+     /*
+     * Returns the total value of the lines for the top 100 words 
+     * @return float
+     */
+    public function getTotal100() {
+        $result = DB::select('SELECT (sum(sum_top100)) as total FROM paretobook.book_lines where sum_top100> 0 AND book_id = '.$this->id);
+
+        return empty($result) ? null : $result[0]->total;
+    }
+
+
+     /*
+     * Returns the total value of the lines for the 20% 
+     * @return float
+     */
+    public function getTotal20() {
+        $result = DB::select('SELECT (sum(sum_pareto_20)) as total FROM paretobook.book_lines where sum_pareto_20> 0 AND book_id = '.$this->id);
+
+        return empty($result) ? null : $result[0]->total;
+    }
+
+
+     /*
+     * Returns the total value of the lines for the +20%
+     * @return float
+     */
+    public function getTotalAbove20() {
+        $result = DB::select('SELECT (sum(sum_pareto_above_20)) as total FROM paretobook.book_lines where sum_pareto_above_20> 0 AND book_id = '.$this->id);
+
+        return empty($result) ? null : $result[0]->total;
+    }
 }
