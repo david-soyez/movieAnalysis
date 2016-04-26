@@ -53,10 +53,10 @@ class ImportBook extends Command
      */
     public function handle()
     {
-        /*
+       /* 
         DB::table('book_words')->truncate();
         DB::table('book_lines')->truncate();
-        DB::table('words')->truncate();
+        //DB::table('words')->truncate();
         DB::table('books')->truncate();
         */ 
 
@@ -208,9 +208,9 @@ class ImportBook extends Command
         $top100words = array();
         $countTop100Words = 0;
         $sum_top100 = 0;
-        $bookWords = BookWord::where(array('book_id'=>$book->id))->orderBy('frequence','desc')->take(100)->get(); 
-        foreach($bookWords as $_bookWord) {
-           $top100words[$_bookWord->word_id] = $_bookWord;
+        $words = Word::where(array())->orderBy('frequence','desc')->take(100)->get(); 
+        foreach($words as $_word) {
+           $top100words[$_word->id] = $_word;
         }
         foreach($lineWords as $_bookWord) {
             if(isset($top100words[$_bookWord->word_id])) {
@@ -237,7 +237,7 @@ class ImportBook extends Command
         $count20PercentWords = 0;
         $sum_pareto_20 = 0;
         foreach($lineWords as $_bookWord) {
-            if(isset($percent20words[$_bookWord->word_id])) {
+            if(isset($percent20words[$_bookWord->word_id]) && !isset($top100words[$_bookWord->word_id])) {
                 $count20PercentWords++; 
                 $sum_pareto_20 = bcadd($sum_pareto_20,$_bookWord->percentage);
             } 

@@ -4,15 +4,19 @@ Top 100 words: {{ round($book->book_top100,2) }}%<br>
 +20% -> {{ round($book->book_pareto_above_20,2) }}%<br>
 Mean 20/line -> {{ round($book->getMean20(),8) }}%<br>
 Mean +20/line -> {{ round($book->getMeanAbove20(),8) }}%<br>
-Rapport mean +20/20 -> {{ round($book->getMeanAbove20()/$book->getMean20(),8) }} <br>
+Rapport mean Line +20/20 -> {{ round($book->getMeanAbove20()/($book->getMean20()),8) }} <br>
 Total top100 -> {{ round($book->getTotal100(),8) }}<br>
 Tota 20% -> {{ round($book->getTotal20(),8) }}<br>
 Total +20% -> {{ round($book->getTotalAbove20(),8) }}<br>
-Rapport +20/20 -> {{ round(($book->getTotalAbove20()*100)/$book->getTotal20(),9) }}
-  <div id="chart_div100{{ $book->id}}" style="height:400px"></div>
-      
+Rapport % +20/20 -> {{ round(($book->getTotalAbove20()*100)/($book->gettotal20()+$book->getTotalAbove20()),9) }}%<br>
+Above20/Top100 -> {{ round($book->getTotal100()/$book->getTotal20(),9) }} <br>
+Mean Above20/Top100 -> {{ round($book->getMeanTop100()/$book->getMean20(),9) }} <br>
+Mean -> {{ round($book->getMean20(),9) }} <br>
+style -> {{ round(($book->getMeanAbove20()/($book->getMeanTop100()+$book->getMean20()))+($book->getMean20()/$book->getMeanTop100()),9) }} <br>
+ <!-- <div id="chart_div100{{ $book->id}}" style="height:400px"></div>
+ -->     
 <script>
-google.charts.setOnLoadCallback(drawBasic100{{ $book->id}});
+//google.charts.setOnLoadCallback(drawBasic100{{ $book->id}});
 
 function drawBasic100{{ $book->id}}() {
 
@@ -40,10 +44,10 @@ function drawBasic100{{ $book->id}}() {
       chart.draw(data, options);
     }
  </script>
-  <div id="chart_div{{ $book->id}}" style="height:400px"></div>
-      
+<!--  <div id="chart_div{{ $book->id}}" style="height:400px"></div>
+-->      
 <script>
-google.charts.setOnLoadCallback(drawBasic{{ $book->id}});
+//google.charts.setOnLoadCallback(drawBasic{{ $book->id}});
 
 function drawBasic{{ $book->id}}() {
 
@@ -53,7 +57,7 @@ function drawBasic{{ $book->id}}() {
 
       data.addRows([
         @foreach ($book->lines as $line)
-        [{{ $line->position }},       {{ $line->count_pareto_20 > 0 ? ( $line->sum_pareto_20) / $line->count_pareto_20 : 0 }}],
+        [{{ $line->position }},       {{ $line->count_pareto_20 > 0 ? ( $line->sum_pareto_20)  : 0 }}],
         @endforeach
       ]);
 
@@ -71,9 +75,10 @@ function drawBasic{{ $book->id}}() {
       chart.draw(data, options);
     }
  </script>
-  <div id="chart_divRare{{ $book->id}}" style="height:400px"></div>
+<!--  <div id="chart_divRare{{ $book->id}}" style="height:400px"></div>
+-->
 <script>
-google.charts.setOnLoadCallback(drawRare{{ $book->id}});
+//google.charts.setOnLoadCallback(drawRare{{ $book->id}});
 
 function drawRare{{ $book->id}}() {
 
@@ -101,9 +106,10 @@ function drawRare{{ $book->id}}() {
       chart.draw(data, options);
     }
  </script>
-  <div id="chart_divLength{{ $book->id}}" style="height:400px"></div>
+<!--  <div id="chart_divLength{{ $book->id}}" style="height:400px"></div>
+-->
 <script>
-google.charts.setOnLoadCallback(drawLength{{ $book->id}});
+//google.charts.setOnLoadCallback(drawLength{{ $book->id}});
 
 function drawLength{{ $book->id}}() {
 
