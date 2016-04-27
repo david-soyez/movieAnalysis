@@ -14,8 +14,6 @@ class Book extends Model
     public function lines()
     {
         return $this->hasMany('App\BookLine');
-
-
     }
 
     /*

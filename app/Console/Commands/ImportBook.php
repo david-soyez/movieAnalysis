@@ -22,6 +22,11 @@ class ImportBook extends Command
      */
     protected $total_words_count = 0;
 
+    /*
+     * Sum frequence of the global words
+     */
+    protected $sum_words = 0;
+
     /**
      * The name and signature of the console command.
      *
@@ -58,7 +63,7 @@ class ImportBook extends Command
         DB::table('book_lines')->truncate();
         //DB::table('words')->truncate();
         DB::table('books')->truncate();
-        */ 
+       */  
 
         $filename = $this->argument('filename'); 
         $language = 'en';
@@ -122,6 +127,9 @@ class ImportBook extends Command
             $bookWord->save();
         }
         
+        // all words in db
+        $this->sum_words = Word::all()->sum('frequence');
+
         // adds the words in database
         $linesAdded=0;
         $i=0;
@@ -220,54 +228,35 @@ class ImportBook extends Command
         }
         $line->count_top100 = $countTop100Words;
 
-        // count the 20% pareto words
-        $wordsFrequences = BookWord::where(array('book_id'=>$book->id))->orderBy('frequence','desc')->sum('frequence'); 
-
-        // how many words to get 20%
-        $countWords20Percent = ceil(($this->unique_words_count*20)/100);
-        
-        // get the total frequence for this 20%
-        $bookWords = BookWord::where(array('book_id'=>$book->id))->orderBy('frequence','desc')->take($countWords20Percent)->get();         
+        // get the 20% words
+        $words = Word::where(array())->orderBy('frequence','desc')->take(Word::get20Count())->get();         
 
         $percent20words = array();
-        foreach($bookWords as $_bookWord) {
-           $percent20words[$_bookWord->word_id] = $_bookWord;
+        foreach($words as $word) {
+           $percent20words[$word->id] = $word;
         }
 
-        // all words in db
-        $wordCount = Word::all()->count();
 
         $count20PercentWords = 0;
         $sum_pareto_20 = 0;
         foreach($lineWords as $_bookWord) {
             if(isset($percent20words[$_bookWord->word_id]) ) {
                 // get the word value from global words table
-                $word = Word::where(array('id'=>$_bookWord->word_id))->first();
                 $count20PercentWords++; 
-                $sum_pareto_20 = bcadd($sum_pareto_20,($word->frequence*100)/$wordCount);
+                $sum_pareto_20 = bcadd($sum_pareto_20,($percent20words[$_bookWord->word_id]->frequence*100)/$this->sum_words);
             } 
         }
 
         $line->count_pareto_20 = $count20PercentWords;
 
-        // count the above 20% pareto words
-        $wordsFrequences = BookWord::where(array('book_id'=>$book->id))->orderBy('frequence','desc')->sum('frequence'); 
-
-        // get the total frequence for above 20%
-        $bookWords = BookWord::where(array('book_id'=>$book->id))->orderBy('frequence','desc')->limit($this->unique_words_count)->offset($countWords20Percent)->get(); 
-
-
-        $percentAbove20words = array();
-        foreach($bookWords as $_bookWord) {
-           $percentAbove20words[$_bookWord->word_id] = $_bookWord;
-        }
-
         $countAbove20PercentWords = 0;
         $sum_pareto_above_20 = 0;
         foreach($lineWords as $_bookWord) {
-            if(isset($percentAbove20words[$_bookWord->word_id])) {
+            if(!isset($percent20words[$_bookWord->word_id]) ) {
+                // get the word value from global words table
+                $word = Word::where(array('id'=>$_bookWord->word_id))->first();
                 $countAbove20PercentWords++; 
-                $sum_pareto_above_20 = bcadd($sum_pareto_above_20,$_bookWord->percentage);
+                $sum_pareto_above_20 = bcadd($sum_pareto_above_20,($word->frequence*100)/$this->sum_words);
             } 
         }
         $line->count_pareto_above_20 = $countAbove20PercentWords;

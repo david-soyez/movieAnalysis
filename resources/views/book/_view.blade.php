@@ -1,7 +1,7 @@
 Book Title: {{ $book->title }}<br>
 Top 100 words: {{ round($book->book_top100,2) }}%<br>
-20% -> {{ round($book->book_pareto_20,2) }}%<br>
-+20% -> {{ round($book->book_pareto_above_20,2) }}%<br>
+20% -> {{ round($book->book_pareto_20,9) }}%<br>
++20% -> {{ round($book->book_pareto_above_20,9) }}%<br>
 Mean 20/line -> {{ round($book->getMean20(),8) }}%<br>
 Mean +20/line -> {{ round($book->getMeanAbove20(),8) }}%<br>
 Rapport mean Line +20/20 -> {{ round($book->getMeanAbove20()/($book->getMean20()),8) }} <br>
@@ -75,20 +75,20 @@ function drawBasic{{ $book->id}}() {
       chart.draw(data, options);
     }
  </script>
-<!--  <div id="chart_divRare{{ $book->id}}" style="height:400px"></div>
--->
+  <div id="chart_divRare{{ $book->id}}" style="height:400px"></div>
+
 <script>
-//google.charts.setOnLoadCallback(drawRare{{ $book->id}});
+google.charts.setOnLoadCallback(drawRare{{ $book->id}});
 
 function drawRare{{ $book->id}}() {
 
       var data = new google.visualization.DataTable();
       data.addColumn('number', 'X');
-      data.addColumn('number', 'Rare words');
+      data.addColumn('number', 'Line complexity');
 
       data.addRows([
         @foreach ($book->lines as $line)
-        [{{ $line->position }},      {{ $line->count_pareto_above_20 > 0 ? $line->sum_pareto_above_20  / $line->count_pareto_above_20: 0 }}],
+        [{{ $line->position }},      {{ $line->count_pareto_above_20 > 0 ? $line->sum_pareto_above_20  / $line->count_words: 0 }}],
         @endforeach
       ]);
 
@@ -97,7 +97,7 @@ function drawRare{{ $book->id}}() {
           title: '{{ $book->title}}'
         },
         vAxis: {
-          title: '% of rare words in the line'
+          title: 'Complexity score'
         }
       };
 
