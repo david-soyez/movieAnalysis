@@ -262,13 +262,16 @@ class ImportBook extends Command
         $line->count_pareto_above_20 = $countAbove20PercentWords;
 
         // sum of top100 words
-        $line->sum_top100 = $sum_top100;
+        if($countTop100Words > 0)
+            $line->sum_top100 = $sum_top100 / $countTop100Words;
 
         // sum of 20% pareto words
-        $line->sum_pareto_20 = $sum_pareto_20;
+        if($count20PercentWords > 0)
+            $line->sum_pareto_20 = $sum_pareto_20 / $count20PercentWords;
 
         // sum of above 20% pareto words
-        $line->sum_pareto_above_20 = $sum_pareto_above_20;
+        if($countAbove20PercentWords > 0)
+            $line->sum_pareto_above_20 = $sum_pareto_above_20 / $countAbove20PercentWords;
     }
 
     /*

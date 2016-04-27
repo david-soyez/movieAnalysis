@@ -3,7 +3,7 @@ Top 100 words: {{ round($book->book_top100,2) }}%<br>
 20% -> {{ round($book->book_pareto_20,9) }}%<br>
 +20% -> {{ round($book->book_pareto_above_20,9) }}%<br>
 Mean 20/line -> {{ round($book->getMean20(),8) }}%<br>
-Mean +20/line -> {{ round($book->getMeanAbove20(),8) }}%<br>
+Mean +20/line  higher is easier -> {{ round($book->getMeanAbove20(),8) }}%<br>
 Rapport mean Line +20/20 -> {{ round($book->getMeanAbove20()/($book->getMean20()),8) }} <br>
 Total top100 -> {{ round($book->getTotal100(),8) }}<br>
 Tota 20% -> {{ round($book->getTotal20(),8) }}<br>
