@@ -44,7 +44,7 @@ class Book extends Model
      * @return float
      */
     public function getMean() {
-        $result = DB::select('SELECT (sum(sum_pareto_20/sum_top100)/count(*)) as mean FROM paretobook.book_lines where book_id = '.$this->id);
+        $result = DB::select('SELECT (sum(sum_pareto_20-sum_pareto_above_20)/count(*)) as mean FROM paretobook.book_lines where book_id = '.$this->id);
 
         return empty($result) ? null : $result[0]->mean;
     }

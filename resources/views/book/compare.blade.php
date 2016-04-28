@@ -10,24 +10,24 @@ function drawBasic() {
 
       var data = new google.visualization.DataTable();
       data.addColumn('string', 'X');
-      data.addColumn('number', 'Top 100 words');
-      data.addColumn('number', '+Common words');
-      data.addColumn('number', '+Rare words');
+      data.addColumn('number', 'Global Complexity(Higher is harder)');
+ //     data.addColumn('number', '+Common words');
+  //    data.addColumn('number', '+Rare words');
 
 
       data.addRows([
         @foreach ($books as $book)
-        [ '{{ $book->title }}',   {{ $book->mean_line_percent_100 }} , {{ $book->mean_line_percent_5 +  $book->mean_line_percent_10  +  $book->mean_line_percent_15  +  $book->mean_line_percent_20 }} ,{{ $book->mean_line_percent_5 + $book->mean_line_percent_10 +  $book->mean_line_percent_15  +  $book->mean_line_percent_20 + $book->mean_line_percent }}] ,
+        [ '{{ $book->title }}',   {{ $book->getMean()}} ] ,
         @endforeach
       ]);
 
       var options = {
-          isStacked: true,
+//          isStacked: true,
         hAxis: {
           title: 'Books'
         },
         vAxis: {
-          title: 'Complexity of a line'
+          title: 'Book mean complexity'
         }
       };
 

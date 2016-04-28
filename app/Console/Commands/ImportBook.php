@@ -115,6 +115,7 @@ class ImportBook extends Command
                 $wordObj = new Word();
                 $wordObj->value = strtolower($word);
                 $wordObj->language = $language;
+                $wordObj->frequence = $frequence;
                 $wordObj->save();
             }
             
@@ -211,7 +212,8 @@ class ImportBook extends Command
 
     protected function lineWriteStats($book, & $line, & $lineWords) {
         $line->count_words = count($lineWords);
-
+        if(count($lineWords)==1)
+            return false;
         // count the top100 words
         $top100words = array();
         $countTop100Words = 0;
@@ -243,7 +245,11 @@ class ImportBook extends Command
             if(isset($percent20words[$_bookWord->word_id]) ) {
                 // get the word value from global words table
                 $count20PercentWords++; 
-                $sum_pareto_20 = bcadd($sum_pareto_20,($percent20words[$_bookWord->word_id]->frequence*100)/$this->sum_words);
+                if($percent20words[$_bookWord->word_id]->frequence > 0)
+                    $value = (($percent20words[$_bookWord->word_id]->frequence*100)/$this->sum_words);
+                else
+                    $value = (100/$this->sum_words);
+                $sum_pareto_20 = bcadd($sum_pareto_20,$value);
             } 
         }
 
@@ -256,22 +262,26 @@ class ImportBook extends Command
                 // get the word value from global words table
                 $word = Word::where(array('id'=>$_bookWord->word_id))->first();
                 $countAbove20PercentWords++; 
-                $sum_pareto_above_20 = bcadd($sum_pareto_above_20,($word->frequence*100)/$this->sum_words);
+                if($word->frequence > 0)
+                    $value = (($word->frequence*100)/$this->sum_words);
+                else
+                    $value = (100/$this->sum_words);
+                $sum_pareto_above_20 = bcadd($sum_pareto_above_20,$value);
             } 
         }
         $line->count_pareto_above_20 = $countAbove20PercentWords;
 
         // sum of top100 words
         if($countTop100Words > 0)
-            $line->sum_top100 = $sum_top100 / $countTop100Words;
+            $line->sum_top100 = $sum_top100 ;
 
         // sum of 20% pareto words
         if($count20PercentWords > 0)
-            $line->sum_pareto_20 = $sum_pareto_20 / $count20PercentWords;
+            $line->sum_pareto_20 = $sum_pareto_20 ;
 
         // sum of above 20% pareto words
         if($countAbove20PercentWords > 0)
-            $line->sum_pareto_above_20 = $sum_pareto_above_20 / $countAbove20PercentWords;
+            $line->sum_pareto_above_20 = $sum_pareto_above_20 ;
     }
 
     /*
