@@ -43,8 +43,20 @@ class Book extends Model
      * Returns the mean value of the lines 
      * @return float
      */
-    public function getMean() {
+    public function getMeanLines() {
         $result = DB::select('SELECT (sum(sum_pareto_20-sum_pareto_above_20)/count(*)) as mean FROM paretobook.book_lines where book_id = '.$this->id);
+
+        return empty($result) ? null : $result[0]->mean;
+    }
+
+    /*
+     * Returns the mean value of the lines 
+     * @return float
+     */
+    public function getMeanWords() {
+        $sumFrequence = BookWord::where(array('book_id'=>$this->id))->sum('frequence');
+
+        $result = DB::select('SELECT (sum(sum_pareto_20-sum_pareto_above_20)/'.$sumFrequence.') as mean FROM paretobook.book_lines where book_id = '.$this->id);
 
         return empty($result) ? null : $result[0]->mean;
     }
