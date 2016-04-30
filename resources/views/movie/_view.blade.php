@@ -14,7 +14,7 @@ function drawRare{{ $movie->id}}() {
       data.addRows([
         @foreach ($conversations as $conversation)
         <?php for($i=$conversation->timeline_start/ 1000;$i<=$conversation->timeline_end/ 1000;$i++):?>
-        [{{ $i }},      {{ (float)($conversation->score ) }}],
+        [{{ $i/60 }},      {{ (float)($conversation->score ) }}],
         <?php endfor; ?>
         @endforeach
       ]);
