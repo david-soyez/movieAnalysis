@@ -9,7 +9,7 @@ function drawRare{{ $movie->id}}() {
 
       var data = new google.visualization.DataTable();
       data.addColumn('number', 'X');
-      data.addColumn('number', 'Language difficulty score');
+      data.addColumn('number', 'Language difficulty level by conversation');
       data.addColumn('number', 'Conversation speed (words/sec)');
 
       data.addRows([
