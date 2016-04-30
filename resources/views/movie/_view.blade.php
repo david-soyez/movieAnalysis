@@ -9,8 +9,8 @@ function drawRare{{ $movie->id}}() {
 
       var data = new google.visualization.DataTable();
       data.addColumn('number', 'X');
-      data.addColumn('number', 'Conversation complexity');
-      data.addColumn('number', 'Speed');
+      data.addColumn('number', 'Speech difficulty');
+      data.addColumn('number', 'Conversation speed');
 
       data.addRows([
         @foreach ($conversations as $conversation)
@@ -39,12 +39,8 @@ function drawRare{{ $movie->id}}() {
         },
         seriesType: 'bars',
         series: {1: {type: 'line',targetAxisIndex:1, lineDashStyle: [2, 2] },0: {type: 'bar',targetAxisIndex:0}},
-        vAxes: { 0: {logScale: false,maxValue: 10000}, 1: {logScale: false,maxValue: 40} },
-        vAxis: {
-          title: 'Conversation Complexity score',
-              viewWindow: {
-            }
-        }
+        vAxes: { 0: {logScale: false,maxValue: 10000,title: 'Speech difficulty score'}, 1: {logScale: false,maxValue: 40,title: 'Conversation speed'} },
+  
       };
 
       var chart = new google.visualization.ComboChart(document.getElementById('chart_divRare{{ $movie->id}}'));
