@@ -9,8 +9,8 @@ function drawRare{{ $movie->id}}() {
 
       var data = new google.visualization.DataTable();
       data.addColumn('number', 'X');
-      data.addColumn('number', 'Speech difficulty');
-      data.addColumn('number', 'Conversation speed');
+      data.addColumn('number', 'Language difficulty score');
+      data.addColumn('number', 'Conversation speed (words/sec)');
 
       data.addRows([
         @foreach ($conversations as $conversation)
@@ -18,12 +18,12 @@ function drawRare{{ $movie->id}}() {
             if(isset($end)) {
                 for($i=$end/1000;$i<$conversation->timeline_start/1000;$i++) {
                 ?>
-                    [{{ $i/60 }}, 0, {{ $endReadingSpeed }}],
+                    [{{ $i/60 }}, 0, {{ $endReadingSpeed/5 }}],
                 <?php
                 }
             }
             for($i=$conversation->timeline_start/ 1000/6;$i<=$conversation->timeline_end/ 1000/6;$i++):?>
-        [{{ $i/10 }},      {{ (float)($conversation->score) }},      {{ (float)($conversation->readingspeed) }}],
+        [{{ $i/10 }},      {{ (float)($conversation->score) }},      {{ (float)($conversation->readingspeed/5) }}],
 <?php 
             $end=$conversation->timeline_end+1; 
             $endReadingSpeed = $conversation->readingspeed;
@@ -39,7 +39,7 @@ function drawRare{{ $movie->id}}() {
         },
         seriesType: 'bars',
         series: {1: {type: 'line',targetAxisIndex:1, lineDashStyle: [2, 2] },0: {type: 'bar',targetAxisIndex:0}},
-        vAxes: { 0: {logScale: false,maxValue: 10000,title: 'Speech difficulty score'}, 1: {logScale: false,maxValue: 40,title: 'Conversation speed'} },
+        vAxes: { 0: {logScale: false,maxValue: 10000,title: 'Language difficulty score'}, 1: {logScale: false,maxValue: 10,title: 'Conversation speed (words/sec)'} },
   
       };
 
