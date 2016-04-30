@@ -27,7 +27,8 @@ function drawRare{{ $movie->id}}() {
         vAxis: {
           title: 'Conversation Complexity score',
               viewWindow: {
-              min:0
+              min:0,
+              max: 10000
             }
         }
       };
