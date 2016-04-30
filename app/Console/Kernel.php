@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
         // Commands\Inspire::class,
         Commands\ImportBook::class,
         Commands\ImportWords::class,
+        Commands\ImportMovie::class,
     ];
 
     /**

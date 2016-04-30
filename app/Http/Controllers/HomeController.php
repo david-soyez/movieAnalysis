@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Book;
+use App\Movie;
 
 class HomeController extends Controller
 {    
@@ -16,9 +17,9 @@ class HomeController extends Controller
      */
     public function view()
     {
-        $booksObj = Book::all();
+        $moviesObj= Movie::all();
 
-        return view('home.view', ['books' => $booksObj]);
+        return view('home.view', ['movies' => $moviesObj]);
     }
 
     /**
@@ -28,9 +29,9 @@ class HomeController extends Controller
      */
     public function compare()
     {
-        $booksObj = Book::all();
+        $moviesObj = Movie::all();
 
-        return view('book.compare', ['books' => $booksObj]);
+        return view('movie.compare', ['movies' => $moviesObj]);
     }
 }
 

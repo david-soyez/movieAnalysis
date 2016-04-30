@@ -1,5 +1,5 @@
 @extends('layouts.master')
 
 @section('content')
-    @each('movie._view', $movies, 'movie')
+ @include('book._view')
 @endsection
