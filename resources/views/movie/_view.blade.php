@@ -35,7 +35,7 @@ function drawRare{{ $movie->id}}() {
       var options = {
         bar: {groupWidth: 90},
         hAxis: {
-          title: '{{ $movie->title}}'
+          title: '{{ $movie->title}} (minutes)'
         },
         seriesType: 'bars',
         series: {1: {type: 'line',targetAxisIndex:1, lineDashStyle: [2, 2] },0: {type: 'bar',targetAxisIndex:0}},
