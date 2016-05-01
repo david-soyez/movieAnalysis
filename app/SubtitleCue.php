@@ -62,11 +62,19 @@ class SubtitleCue extends Model
         // all words in db
         $sum_words = DB::select('SELECT sum(frequence) as frequence FROM words as frequence')[0]->frequence;
 
+        $words = Word::get20Words();         
+
+        $percent20words = array();
+        foreach($words as $word) {
+           $percent20words[$word->id] = $word;
+        }
+
         // compute score
         foreach($frequencies as $word => $frequence) {
             $wordObj=Word::where(array('value'=>strtolower($word),'language'=>$language))->first();
             // we substracte to the most used word to reverse the result
-            $sum_score += (($mostUsedWord->frequence*100)/$sum_words) - (($wordObj->frequence*100)/$sum_words);
+            if(!isset($percent20words[$wordObj->id]))
+                $sum_score += (($mostUsedWord->frequence*100)/$sum_words) - (($wordObj->frequence*100)/$sum_words);
         }
 
         // we calculate the difficuly / millisecond times the number of words (times a rate of 10 to reduce the float)

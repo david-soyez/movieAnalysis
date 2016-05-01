@@ -14,13 +14,20 @@ class ImportMovie extends Command
     /*
      * Max delay between conversation in milliseconds
      */
-    const MAX_DELAY_CONVERSATION = 10000;
+    const MAX_DELAY_CONVERSATION = 30000;
+
+    /*
+     * Max delay between conversation in milliseconds
+     */
+    const MIN_DELAY_CONVERSATION = 1;
 
     protected $subrip;
 
     protected $cues=array();
 
     protected $conversations = array();
+
+    protected $delay_conversation = 0;
 
     /**
      * The name and signature of the console command.
@@ -93,6 +100,21 @@ class ImportMovie extends Command
         // regroups the lines in every cues to remove unecessary line breaks
         $this->regroupCuesLines();
 
+        // finds the best delay between conversation
+        $delays = array();
+        $previousCue = null;
+        foreach($this->subrip->getCues() as $cue) {
+            if($previousCue == null) {
+                    $previousCue = $cue;
+                    continue;
+            } 
+            if(($cue->getStopMS() - $previousCue->getStartMS()) <= self::MAX_DELAY_CONVERSATION && ($cue->getStopMS() - $previousCue->getStartMS()) >= self::MIN_DELAY_CONVERSATION) {
+                $delays[] = $cue->getStopMS() - $previousCue->getStartMS();
+            }
+            $previousCue = $cue;
+        }
+        $this->delay_conversation = 2000;//$this->sd($delays);
+        
         // creates cues objects
         $i=0;
         foreach($this->subrip->getCues() as $cue) {
@@ -104,6 +126,9 @@ class ImportMovie extends Command
             $cueObject->timeline_end = $cue->getStopMS();
             $cueObject->caption = $cue->getStrippedText(true);
             $cueObject->readingspeed = $cue->getReadingSpeed();
+            if($cueObject->readingspeed > 100) {
+                $cueObject->readingspeed = 20;
+            }
             $cueObject->cps = $cue->getCPS();
             $cueObject->strlen = $cue->strlen();
             $cueObject->computeScore();
@@ -138,7 +163,7 @@ class ImportMovie extends Command
             }
             
             // if above max delay conversation finish the conversation and start a new one
-            if($cue->timeline_start > ($currentConversation->timeline_end + self::MAX_DELAY_CONVERSATION)) {
+            if($cue->timeline_start - $currentConversation->timeline_end >= 1000) {
                 $currentConversation->cues_time = $cuesTime;
                 $currentConversation->count_words = $countWords;
                 $currentConversation->strlen = $strlen;
@@ -250,6 +275,7 @@ class ImportMovie extends Command
         $subtitleObj->std_score = $this->sd($conversationScore);
         $subtitleObj->readingspeed = array_sum($meanReadingSpeed) / count($meanReadingSpeed);
         $subtitleObj->std_readingspeed = $this->sd($meanReadingSpeed);
+        $subtitleObj->delay_conversation = $this->delay_conversation;
         $subtitleObj->save();
     }
 
