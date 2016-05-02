@@ -131,7 +131,8 @@ class ImportMovie extends Command
             }
             $cueObject->cps = $cue->getCPS();
             $cueObject->strlen = $cue->strlen();
-            $cueObject->computeScore();
+            $cueObject->addWordsFrequences();
+            //$cueObject->computeScore();
             $cueObject->save();
             $this->cues[] = $cueObject;
         }
@@ -276,6 +277,7 @@ class ImportMovie extends Command
         $subtitleObj->readingspeed = array_sum($meanReadingSpeed) / count($meanReadingSpeed);
         $subtitleObj->std_readingspeed = $this->sd($meanReadingSpeed);
         $subtitleObj->delay_conversation = $this->delay_conversation;
+        $subtitleObj->cover_75 = $subtitleObj->findCovering(75);
         $subtitleObj->save();
     }
 

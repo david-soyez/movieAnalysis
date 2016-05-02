@@ -3,16 +3,20 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\MovieSubtitle;
 use DB;
 
 class SubtitleCue extends Model
 {
     public $timestamps = false;
-    public function computeScore() {
-        $sum_score = 0;
 
-        // must retrieve language from the movie
-        $language = 'en';
+    protected $words = array();
+
+    /*
+     * Find the words in the cue and add the frequence
+     *
+     */
+    protected function findWordsFrequences() {
 
         // filter content
         $content = $this->caption;
@@ -22,7 +26,7 @@ class SubtitleCue extends Model
         // calculate mean line frequence
         $lines = preg_split('/[\.\n]+/',$content);
 
-        $wordsFound=0;
+        $frequences = array();
         foreach($lines as $line) {
             $matches = str_word_count($line,1,'’1234567890');
             foreach($matches as $word) {
@@ -31,33 +35,73 @@ class SubtitleCue extends Model
                 if(!$this->isWord($word)){
                     continue;
                 }
-                if(!isset($frequencies[strtolower($word)])) {
-                    $frequencies[strtolower($word)] = 0;
+                if(!isset($frequences[strtolower($word)])) {
+                    $frequences[strtolower($word)] = 0;
                 }
-                $frequencies[strtolower($word)]++;
-                $wordsFound++;
+                $frequences[strtolower($word)]++;
             }
         }
-        if(!isset($frequencies)) {
-            return false;
-        }
-        arsort($frequencies);
-        $this->count_words = $wordsFound;
 
-        // most frequent word
-        $mostUsedWord = Word::where(array())->orderBy('frequence','desc')->take(1)->get()->first();         
-        
+        return $frequences;
+    }
+
+    public function addWordsFrequences() {
+        $frequences = $this->findWordsFrequences();
+
+        arsort($frequences);
+
         // write the words to database
-        foreach($frequencies as $word => $frequence) {
-            $wordObj=Word::where(array('value'=>strtolower($word),'language'=>$language))->first();
+        foreach($frequences as $word => $frequence) {
+            $wordObj=Word::where(array('value'=>strtolower($word),'language'=>$this->subtitle->language))->first();
             if(empty($wordObj)) {
                 $wordObj = new Word();
                 $wordObj->value = strtolower($word);
-                $wordObj->language = $language;
-                $wordObj->frequence = $frequence;
-                $wordObj->save();
+                $wordObj->language = $this->subtitle->language;
+                $wordObj->frequence_subtitle = 0;
+                $wordObj->frequence_book = 0;
             }
+                $wordObj->frequence_subtitle += $frequence;
+                $wordObj->save();
         }
+
+        // adds the subtitle_words to database
+        $this->addSubtitleWords();
+    }
+
+    protected function addSubtitleWords() {
+        $frequences = $this->findWordsFrequences();
+
+        // write the words to database
+        foreach($frequences as $word => $frequence) {
+            $wordObj=Word::where(array('value'=>strtolower($word),'language'=>$this->subtitle->language))->first();
+            if(empty($wordObj)) {
+                continue;
+            }
+            $subWordObj=SubtitleWord::where(array('word_id'=>$wordObj->id,'subtitle_id'=>$this->subtitle_id))->first();
+            if(empty($subWordObj)) {
+                $subWordObj = new SubtitleWord();
+                $subWordObj->subtitle_id= $this->subtitle->id;
+                $subWordObj->word_id = $wordObj->id;
+                $subWordObj->frequence= 0;
+            }
+
+            $subWordObj->frequence += $frequence;
+            $subWordObj->save();
+        }
+
+    }
+
+    public function computeScore() {
+
+
+
+        return true;
+
+
+        $sum_score = 0;
+
+        // most frequent word
+        $mostUsedWord = Word::where(array())->orderBy('frequence','desc')->take(1)->get()->first();     
         
         // all words in db
         $sum_words = DB::select('SELECT sum(frequence) as frequence FROM words as frequence')[0]->frequence;
@@ -70,8 +114,8 @@ class SubtitleCue extends Model
         }
 
         // compute score
-        foreach($frequencies as $word => $frequence) {
-            $wordObj=Word::where(array('value'=>strtolower($word),'language'=>$language))->first();
+        foreach($frequences as $word => $frequence) {
+            $wordObj=Word::where(array('value'=>strtolower($word),'language'=>$this->subtitle->language))->first();
             // we substracte to the most used word to reverse the result
             if(!isset($percent20words[$wordObj->id]))
                 $sum_score += (($mostUsedWord->frequence*100)/$sum_words) - (($wordObj->frequence*100)/$sum_words);
@@ -213,5 +257,13 @@ class SubtitleCue extends Model
        $word = trim($word,"-"); 
 
        return $word;
+    }
+
+    /**
+     * Get the subtitle that owns the cue.
+     */
+    public function subtitle()
+    {
+        return $this->belongsTo('App\MovieSubtitle', 'subtitle_id');
     }
 }

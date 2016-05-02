@@ -56,9 +56,9 @@ class ImportWords extends Command
                 $wordObj = new Word();
                 $wordObj->value = strtolower($word);
                 $wordObj->language = $language;
-                $wordObj->frequence = 0;
+                $wordObj->frequence_book = 0;
             }
-            $wordObj->frequence = $wordObj->frequence + 1;
+            $wordObj->frequence_book = $wordObj->frequence_book + 1;
             $wordObj->save();
         }
 

@@ -15,8 +15,9 @@ class CreateWordsTable extends Migration
          Schema::create('words', function (Blueprint $table) {
             $table->increments('id');
             $table->string('value');
-            $table->bigInteger('frequence');
-            $table->enum('language',array('en','fr'));
+            $table->bigInteger('frequence_book')->nullable();
+            $table->bigInteger('frequence_subtitle')->nullable();
+            $table->enum('language',array('en','fr','es','de','it'));
          });    
     }
 
