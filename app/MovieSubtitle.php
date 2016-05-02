@@ -43,12 +43,13 @@ class MovieSubtitle extends Model
         }
 
         // find count to have to get 75% of the global content
-        $n = 0;
+        $n = 1;
         $percent_material = 0;
         $percent_words = 0;
         while($percent_material < $coverPercent) {
             $percent_words = ($n*100)/count($results);
             $sliced = array_slice($results,0,$n);  
+            $sum_sliced = 0;
             foreach($sliced as $slice) {
                 $sum_sliced += $slice->frequence;
             }
