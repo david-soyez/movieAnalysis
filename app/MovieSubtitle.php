@@ -48,7 +48,7 @@ class MovieSubtitle extends Model
         $percent_words = 0;
         while($percent_material < $coverPercent) {
             $percent_words = ($n*100)/count($results);
-            $sliced = array_slide($results,0,$n);  
+            $sliced = array_slice($results,0,$n);  
             foreach($sliced as $slice) {
                 $sum_sliced += $slice->frequence;
             }
