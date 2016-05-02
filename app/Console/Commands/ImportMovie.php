@@ -132,7 +132,7 @@ class ImportMovie extends Command
             $cueObject->cps = $cue->getCPS();
             $cueObject->strlen = $cue->strlen();
             $cueObject->addWordsFrequences();
-            //$cueObject->computeScore();
+            $cueObject->score = $cueObject->findCovering(75);
             $cueObject->save();
             $this->cues[] = $cueObject;
         }
@@ -160,7 +160,6 @@ class ImportMovie extends Command
                 $cuesTime += $cue->timeline_end - $cue->timeline_start;
                 $countWords+= $cue->count_words;
                 $strlen+= $cue->strlen;
-                $score+= $cue->score;
             }
             
             // if above max delay conversation finish the conversation and start a new one
@@ -168,9 +167,7 @@ class ImportMovie extends Command
                 $currentConversation->cues_time = $cuesTime;
                 $currentConversation->count_words = $countWords;
                 $currentConversation->strlen = $strlen;
-                $currentConversation->score = $score;
                 $cuesTime = 0;
-                $score = 0;
                 $countWords = 0;
                 $strlen = 0;
                 $currentConversation->readingspeed = array_sum($readingspeed)/count($readingspeed);
@@ -191,12 +188,10 @@ class ImportMovie extends Command
                 $cuesTime += $cue->timeline_end - $cue->timeline_start;
                 $countWords+= $cue->count_words;
                 $strlen+= $cue->strlen;
-                $score+= $cue->score;
                 if ($i == count($this->cues)) {
                     $currentConversation->cues_time = $cuesTime;
                     $currentConversation->count_words = $countWords;
                     $currentConversation->strlen = $strlen;
-                    $currentConversation->score = $score;
                     $currentConversation->readingspeed = array_sum($readingspeed)/count($readingspeed);
                     $currentConversation->cps= array_sum($cps)/count($cps);
                     $currentConversation->strlen = mb_strlen($currentConversation->caption, 'UTF-8'); 
@@ -214,13 +209,10 @@ class ImportMovie extends Command
                 $cuesTime += $cue->timeline_end - $cue->timeline_start;
                 $countWords+= $cue->count_words;
                 $strlen+= $cue->strlen;
-                $score+= $cue->score;
                 $currentConversation->cues_time = $cuesTime;
                 $currentConversation->count_words = $countWords;
                 $currentConversation->strlen = $strlen;
-                $currentConversation->score = $score;
                 $cuesTime = 0;
-                $score = 0;
                 $countWords = 0;
                 $strlen = 0;
                 $currentConversation->readingspeed = array_sum($readingspeed)/count($readingspeed);
@@ -239,10 +231,12 @@ class ImportMovie extends Command
                 $cuesTime += $cue->timeline_end - $cue->timeline_start;
                 $countWords+= $cue->count_words;
                 $strlen+= $cue->strlen;
-                $score+= $cue->score;
             }
 
         }
+
+        // computes subtitle score
+        $cword75 = $subtitleObj->findCovering(75);
 
         // loops through conversation to score them
         $conversationScore = array();
@@ -252,6 +246,9 @@ class ImportMovie extends Command
         $i=0;
         foreach($this->conversations as $conversation) {
             $i++;
+            // finds how much you can read with these words
+            $conversation->score = $conversation->findScore($cword75);
+            $conversation->save();
             $conversationScore[] = $conversation->score;
             $conversationStrlen[] = $conversation->strlen;
         }
@@ -277,7 +274,7 @@ class ImportMovie extends Command
         $subtitleObj->readingspeed = array_sum($meanReadingSpeed) / count($meanReadingSpeed);
         $subtitleObj->std_readingspeed = $this->sd($meanReadingSpeed);
         $subtitleObj->delay_conversation = $this->delay_conversation;
-        $subtitleObj->cover_75 = $subtitleObj->findCovering(75);
+        $subtitleObj->cword_75 = $cword75;
         $subtitleObj->save();
     }
 

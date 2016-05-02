@@ -20,6 +20,6 @@ class Movie extends Model
      */
     public function subtitle()
     {
-        return MovieSubtitle::where(array('movie_id'=>$this->id))->first();
+        return MovieSubtitle::where(array('movie_id'=>$this->id))->orderBy('cword_75','desc')->first();
     }
 }

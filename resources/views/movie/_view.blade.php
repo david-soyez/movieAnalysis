@@ -1,5 +1,6 @@
 <?php $conversations = $movie->subtitle()->conversations;
 ?>
+<b>Complexity score for 75% of comprehension: {{ $movie->subtitle()->cword_75 }}</b><br>
   <div id="chart_divRare{{ $movie->id}}" style="height:400px"></div>
 
 <script>
@@ -10,7 +11,7 @@ function drawRare{{ $movie->id}}() {
       var data = new google.visualization.DataTable();
       data.addColumn('number', 'X');
       data.addColumn('number', 'Dialogue streak');
-      data.addColumn('number', 'Dialogue speed (words/sec)');
+      data.addColumn('number', 'Comprehension');
 
       data.addRows([
         @foreach ($conversations as $conversation)
@@ -18,27 +19,28 @@ function drawRare{{ $movie->id}}() {
             if(isset($end)) {
                 for($i=$end/1000;$i<$conversation->timeline_start/1000;$i++) {
                 ?>
-                    [{{ $i/60 }}, 0, {{ $endReadingSpeed }}],
+                    [{{ $i/60 }}, 0, 0 ],
                 <?php
                 }
             }
             for($i=$conversation->timeline_start/ 1000/6;$i<=$conversation->timeline_end/ 1000/6;$i++):?>
-        [{{ $i/10 }},      {{ (float)($conversation->strlen) }},      {{ (float)(($conversation->readingspeed/5)) }}],
+        [{{ $i/10 }},      {{ (float)($conversation->count_words) }},      {{ (float)($conversation->count_words- (($conversation->count_words*(100-$conversation->score))/100)) }}],
 <?php 
             $end=$conversation->timeline_end+1; 
-            $endReadingSpeed =(float)($conversation->readingspeed/5) ;
+            $endReadingSpeed =(float)($conversation->count_words- (($conversation->count_words*(100-$conversation->score))/100)) ;
             
             endfor; ?>
         @endforeach
       ]);
 
       var options = {
-        bar: {groupWidth: 90},
+      bar: {groupWidth: 90},
+          colors: ['blue','green'],
         hAxis: {
           title: '{{ $movie->title}} (minutes)'
         },
-        series: {1: {type: 'line',targetAxisIndex:1},0: {type: 'bar',targetAxisIndex:0}},
-        vAxes: { 0: {logScale: false,title: 'Dialogue streak score',maxValue:2000}, 1: {logScale: false,title: 'Dialogue speed (words/sec)',maxValue:10} },
+        series: {1: {type: 'bar',targetAxisIndex:1},0: {type: 'bar',targetAxisIndex:0}},
+        vAxes: { 0: {logScale: false,title: 'Dialogue streak score',maxValue:300}, 1: {title: 'Comprehension',maxValue:300} },
   
       };
 

@@ -30,9 +30,9 @@ class SubtitleCue extends Model
         foreach($lines as $line) {
             $matches = str_word_count($line,1,'’1234567890');
             foreach($matches as $word) {
-                $word = $this->filterWord($word);
+                $word = self::filterWord($word);
                 $word = strtolower($word);
-                if(!$this->isWord($word)){
+                if(!self::isWord($word)){
                     continue;
                 }
                 if(!isset($frequences[strtolower($word)])) {
@@ -91,6 +91,35 @@ class SubtitleCue extends Model
 
     }
 
+    public function findCovering($coverPercent) {
+        $wordsSubResult= $this->findWordsFrequences();
+        $words= DB::select('SELECT * FROM words order by frequence_subtitle desc');
+
+        $wordsSub = array();
+        $sumSub = 0;
+        foreach($wordsSubResult as $word => $frequence) {
+            $wordsSub[$word] = $frequence; 
+            $sumSub += $frequence;
+        }
+
+        // find count to have to get 75% of the global content
+        $percent_material = 0;
+
+        $sum = 0;
+        $n = 0;
+        foreach($words as $word) {
+            $n++;
+            if(isset($wordsSub[$word->value])) {
+                $sum += $wordsSub[$word->value];
+                $percent_material = ($sum*100)/$sumSub;
+                if($percent_material >= $coverPercent)
+                   break;
+            }
+        }
+
+        return $n;
+    }
+
     public function computeScore() {
 
 
@@ -125,7 +154,7 @@ class SubtitleCue extends Model
         return $this->score = $sum_score;
     }
 
-    protected function isWord($word) {
+    static function isWord($word) {
 
         $err = false;
 
@@ -252,7 +281,7 @@ class SubtitleCue extends Model
         return !$err;
     }
 
-    protected function filterWord($word) {
+    static function filterWord($word) {
        $word = trim($word,"'"); 
        $word = trim($word,"-"); 
 
