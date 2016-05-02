@@ -1,6 +1,6 @@
 <?php $conversations = $movie->subtitle()->conversations;
 ?>
-<b>Complexity score for 75% of comprehension: {{ $movie->subtitle()->cword_75 }}</b><br>
+<b>Complexity score for 75% of comprehension of the full movie: {{ $movie->subtitle()->cword_75 }}</b><br>
   <div id="chart_divRare{{ $movie->id}}" style="height:400px"></div>
 
 <script>
