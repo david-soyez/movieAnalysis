@@ -1,0 +1,6 @@
+FrIm    = Frequency (per million words) in imaginative written texts in the BNC
+LL      = Log likelihood. Words are listed in order of distinctiveness down to a minimum
+       log likelihood of 100.
+FrIn    = Frequency (per million words) in informative written texts in the BNC
+
+

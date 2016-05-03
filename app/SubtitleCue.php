@@ -59,6 +59,15 @@ class SubtitleCue extends Model
                 $wordObj->language = $this->subtitle->language;
                 $wordObj->frequence_subtitle = 0;
                 $wordObj->frequence_book = 0;
+            } else {
+                // if word existing try to match the lemma if one existing
+                if($wordObj->lemma_word_id != null) {
+                    // adds the frequence before changing word
+                    $wordObj->frequence_subtitle += $frequence;
+                    $wordObj->save();
+
+                    $wordObj=Word::where(array('lemma_word_id'=>$wordObj->lemma_word_id))->first();
+                }
             }
                 $wordObj->frequence_subtitle += $frequence;
                 $wordObj->save();
@@ -77,6 +86,12 @@ class SubtitleCue extends Model
             if(empty($wordObj)) {
                 continue;
             }
+
+            // if word existing try to match the lemma if one existing
+            if($wordObj->lemma_word_id != null) {
+                $wordObj=Word::where(array('lemma_word_id'=>$wordObj->lemma_word_id))->first();
+            }
+
             $subWordObj=SubtitleWord::where(array('word_id'=>$wordObj->id,'subtitle_id'=>$this->subtitle_id))->first();
             if(empty($subWordObj)) {
                 $subWordObj = new SubtitleWord();

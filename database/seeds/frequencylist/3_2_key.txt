@@ -1,0 +1,8 @@
+(based on the spoken demographically-sampled and context governed parts of the BNC)     
+Ordered by Log Likelihood (distinctiveness); not lemmatized; minimum log likelihood of 100.
+
+PoS     = Part of speech
+FrCo    = Frequency (per million words) in demographically sampled speech (conversational)
+LogLike = Log likelihood of the different scores for conversational and task-oriented speech
+FrTO    = Frequency (per million words) in context-governed (task-oriented) speech
+

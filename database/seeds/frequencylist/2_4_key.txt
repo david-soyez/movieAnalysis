@@ -1,0 +1,8 @@
+(ordered by Log Likelihood; not lemmatized; minimum log likelihood of 100)
+
+PoS     = Part of speech
+FrSp    = Frequency (per million words) in the spoken part of the BNC. 
+LogLike = Log likelihood of the different scores for written and spoken English
+FrWr    = Frequency (per million words) in the written part of the BNC.
+
+

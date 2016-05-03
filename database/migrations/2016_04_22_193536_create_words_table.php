@@ -14,10 +14,12 @@ class CreateWordsTable extends Migration
     {
          Schema::create('words', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('lemma_word_id')->nullable();
             $table->string('value');
             $table->bigInteger('frequence_book')->nullable();
             $table->bigInteger('frequence_subtitle')->nullable();
             $table->enum('language',array('en','fr','es','de','it'));
+            $table->index('lemma_word_id');
          });    
     }
 

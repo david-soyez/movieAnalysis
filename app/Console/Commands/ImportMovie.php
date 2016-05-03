@@ -132,7 +132,7 @@ class ImportMovie extends Command
             $cueObject->cps = $cue->getCPS();
             $cueObject->strlen = $cue->strlen();
             $cueObject->addWordsFrequences();
-            $cueObject->score = $cueObject->findCovering(95);
+            $cueObject->score = $cueObject->findCovering(80);
             $cueObject->save();
             $this->cues[] = $cueObject;
         }
@@ -236,7 +236,7 @@ class ImportMovie extends Command
         }
 
         // computes subtitle score
-        $cword80 = $subtitleObj->findCovering(95);
+        $cword80 = $subtitleObj->findCovering(80);
 
         // loops through conversation to score them
         $conversationScore = array();

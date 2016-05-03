@@ -1,0 +1,8 @@
+FrIm    = Frequency in imaginative writing
+Ra      = Range (0-19 for imaginative writing; 0-71 for informative writing)
+DiIm    = Dispersion (Juilland's D) in imaginative writing
+LL      = Log Likelihood (measure of distinctiveness)
+FrIn    = Frequency in informative writing
+DiIn    = Dispersion (Juilland's D) in informative writing
+
+

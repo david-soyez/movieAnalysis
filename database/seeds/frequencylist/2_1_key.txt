@@ -1,0 +1,9 @@
+(Words with a minimum lemma frequency of 160 per million words in either speech or writing)
+
+FrSp    = Frequency (per million words) in spoken texts of the BNC
+Ra      = Range across spoken texts (up to a maximum of 10 sectors of the corpus)
+          Range across written texts (up to a maximum of 90 sectors of the corpus)
+DiSp    = Dispersion in spoken texts: a value from 0 to 1 (Juilland's D)
+LogLi   = Log Likelihood score, indicating distinctiveness, or significance of the difference between the spoken and written language frequencies
+FrWr    = Frequency (per million words) in written texts
+DiWr    = Dispersion in written texts, a value from 0 to 1 (Juilland's D)

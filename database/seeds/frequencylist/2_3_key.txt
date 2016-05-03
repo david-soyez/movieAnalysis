@@ -1,0 +1,9 @@
+This list gives frequencies of word forms in the written part of the
+British National Corpus, comparing them with those of the spoken part
+(minimum frequency: 20 per million in the written part). 
+
+FrSp    = Frequency (per million words) in spoken English
+LL      = Log likelihood: distinctiveness of scores for written and spoken English
+FrWr    = Frequency (per million words) in written English
+
+

@@ -1,0 +1,13 @@
+	the	61847
+	a	21626
+	his	4285
+	an	3430
+	their	2608
+	her	2183
+	its	1632
+	my	1525
+	your	1383
+	no	1343
+	our	950
+	every	401
+	me	23

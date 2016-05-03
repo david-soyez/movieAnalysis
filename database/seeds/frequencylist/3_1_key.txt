@@ -1,0 +1,14 @@
+Comparing the Demographically sampled and Context-governed Parts of the Spoken BNC
+
+FrCo    = Frequency (per million words) in demographically sampled conversational speech 
+Ra      = Range across conversational speech (maximum of 4 sectors)
+          Range across task-oriented speech (maximum of 6 sectors)
+DiCo    = Dispersion (Juilland's D) in demographically sampled conversational speech
+LL      = Distinctiveness, measured in log likelihood (varying from 0.00 to 1.00)
+FrTO    = Frequency (per million words) in context-governed speech (task-oriented)
+DiCG    = Dispersion (Juilland's D) in context-governed speech (task-oriented)
+
+NOTE: The list is restricted to lemmas with a frequency of 120 per
+million or more in one of the two speech subcorpora
+
+
