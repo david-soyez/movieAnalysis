@@ -4,7 +4,28 @@
     "gulp": "^3.9.1"
   },
   "dependencies": {
+    "bootstrap-sass": "^3.0.0",
     "laravel-elixir": "^5.0.0",
-    "bootstrap-sass": "^3.0.0"
-  }
+    "opensubtitles-api": "^2.4.0"
+  },
+  "name": "paretobook",
+  "description": "",
+  "version": "1.0.0",
+  "main": "gulpfile.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/david-soyez/paretobook.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/david-soyez/paretobook/issues"
+  },
+  "homepage": "https://github.com/david-soyez/paretobook#readme"
 }

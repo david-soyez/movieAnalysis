@@ -132,7 +132,7 @@ class ImportMovie extends Command
             $cueObject->cps = $cue->getCPS();
             $cueObject->strlen = $cue->strlen();
             $cueObject->addWordsFrequences();
-            $cueObject->score = $cueObject->findCovering(75);
+            $cueObject->score = $cueObject->findCovering(95);
             $cueObject->save();
             $this->cues[] = $cueObject;
         }
@@ -236,7 +236,7 @@ class ImportMovie extends Command
         }
 
         // computes subtitle score
-        $cword75 = $subtitleObj->findCovering(75);
+        $cword80 = $subtitleObj->findCovering(95);
 
         // loops through conversation to score them
         $conversationScore = array();
@@ -247,7 +247,7 @@ class ImportMovie extends Command
         foreach($this->conversations as $conversation) {
             $i++;
             // finds how much you can read with these words
-            $conversation->score = $conversation->findScore($cword75);
+            $conversation->score = $conversation->findScore($cword80);
             $conversation->save();
             $conversationScore[] = $conversation->score;
             $conversationStrlen[] = $conversation->strlen;
@@ -274,7 +274,7 @@ class ImportMovie extends Command
         $subtitleObj->readingspeed = array_sum($meanReadingSpeed) / count($meanReadingSpeed);
         $subtitleObj->std_readingspeed = $this->sd($meanReadingSpeed);
         $subtitleObj->delay_conversation = $this->delay_conversation;
-        $subtitleObj->cword_75 = $cword75;
+        $subtitleObj->cword_80 = $cword80;
         $subtitleObj->save();
     }
 
