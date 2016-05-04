@@ -18,6 +18,7 @@ class CreateWordsTable extends Migration
             $table->string('value');
             $table->bigInteger('frequence_spoken')->nullable();
             $table->bigInteger('frequence_written')->nullable();
+            $table->bigInteger('frequence_movie')->nullable();
             $table->string('pos',5);
             $table->decimal('dispersion', 3, 2)->nullable(); // from 0 to 1
             $table->integer('range')->nullable(); // corpus range domain from 0 to 100

@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Captioning\Format\SubripFile;
+use App\Word;
 use App\Movie;
 use App\MovieSubtitle;
 use App\SubtitleCue;
@@ -68,6 +69,11 @@ class ImportMovie extends Command
 
         $language = 'en';
         bcscale(14);
+
+        // convert english contractions
+        if($language == 'en') {
+            $content = Word::reverseEnglishContractions($content);
+        }
         
         // opens the subtitle file
         $this->subrip = new SubripFile($filename);

@@ -52,24 +52,24 @@ class SubtitleCue extends Model
 
         // write the words to database
         foreach($frequences as $word => $frequence) {
-            $wordObj=Word::where(array('value'=>strtolower($word),'language'=>$this->subtitle->language))->first();
+            $wordObj=Word::where(array('value'=>strtolower($word),'language'=>$this->subtitle->language))->orderBy('frequence_spoken','desc')->first();
             if(empty($wordObj)) {
                 $wordObj = new Word();
                 $wordObj->value = strtolower($word);
                 $wordObj->language = $this->subtitle->language;
-                $wordObj->frequence_subtitle = 0;
+                $wordObj->frequence_movie = 0;
                 $wordObj->frequence_book = 0;
             } else {
                 // if word existing try to match the lemma if one existing
                 if($wordObj->lemma_word_id != null) {
                     // adds the frequence before changing word
-                    $wordObj->frequence_subtitle += $frequence;
+                    $wordObj->frequence_movie += $frequence;
                     $wordObj->save();
 
-                    $wordObj=Word::where(array('lemma_word_id'=>$wordObj->lemma_word_id))->first();
+                    $wordObj=Word::where(array('lemma_word_id'=>$wordObj->lemma_word_id))->orderBy('frequence_spoken','desc')->first();
                 }
             }
-                $wordObj->frequence_subtitle += $frequence;
+                $wordObj->frequence_movie += $frequence;
                 $wordObj->save();
         }
 
@@ -82,7 +82,7 @@ class SubtitleCue extends Model
 
         // write the words to database
         foreach($frequences as $word => $frequence) {
-            $wordObj=Word::where(array('value'=>strtolower($word),'language'=>$this->subtitle->language))->first();
+            $wordObj=Word::where(array('value'=>strtolower($word),'language'=>$this->subtitle->language))->orderBy('frequence_spoken','desc')->first();
             if(empty($wordObj)) {
                 continue;
             }
@@ -108,7 +108,7 @@ class SubtitleCue extends Model
 
     public function findCovering($coverPercent) {
         $wordsSubResult= $this->findWordsFrequences();
-        $words= DB::select('SELECT * FROM words order by frequence_subtitle desc');
+        $words= DB::select('SELECT * FROM words order by frequence_spoken desc');
 
         $wordsSub = array();
         $sumSub = 0;
@@ -145,10 +145,10 @@ class SubtitleCue extends Model
         $sum_score = 0;
 
         // most frequent word
-        $mostUsedWord = Word::where(array())->orderBy('frequence','desc')->take(1)->get()->first();     
+        $mostUsedWord = Word::where(array())->orderBy('frequence_spoken','desc')->take(1)->get()->first();     
         
         // all words in db
-        $sum_words = DB::select('SELECT sum(frequence) as frequence FROM words as frequence')[0]->frequence;
+        $sum_words = DB::select('SELECT sum(frequence_spoken) as frequence FROM words')[0]->frequence;
 
         $words = Word::get20Words();         
 
@@ -159,7 +159,7 @@ class SubtitleCue extends Model
 
         // compute score
         foreach($frequences as $word => $frequence) {
-            $wordObj=Word::where(array('value'=>strtolower($word),'language'=>$this->subtitle->language))->first();
+            $wordObj=Word::where(array('value'=>strtolower($word),'language'=>$this->subtitle->language))->orderBy('frequence_spoken','desc')->first();
             // we substracte to the most used word to reverse the result
             if(!isset($percent20words[$wordObj->id]))
                 $sum_score += (($mostUsedWord->frequence*100)/$sum_words) - (($wordObj->frequence*100)/$sum_words);

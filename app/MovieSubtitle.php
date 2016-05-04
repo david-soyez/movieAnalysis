@@ -37,9 +37,9 @@ class MovieSubtitle extends Model
     public function findCovering($coverPercent) {
         // takes all the words from the subtitle
         // order them with the frequency of the words table
-        $wordsSubResult = DB::select('SELECT * FROM subtitle_words  INNER JOIN words ON words.id = subtitle_words.word_id WHERE subtitle_id = '.$this->id.' order by words.frequence_subtitle desc ');
+        $wordsSubResult = DB::select('SELECT * FROM subtitle_words  INNER JOIN words ON words.id = subtitle_words.word_id WHERE subtitle_id = '.$this->id.' order by words.frequence_spoken desc ');
 
-        $words= DB::select('SELECT * FROM words order by frequence_subtitle desc');
+        $words= DB::select('SELECT * FROM words order by frequence_spoken desc');
 
         $sumSub = 0;
         foreach($wordsSubResult as $_wb) {
@@ -75,7 +75,7 @@ class MovieSubtitle extends Model
      * @return array
      */
     public function getHardWords($n=0) {
-        $words= DB::select('SELECT * FROM words order by frequence_subtitle desc limit '.$this->cword_80 );
+        $words= DB::select('SELECT * FROM words order by frequence_spoken desc limit '.$this->cword_80 );
         $wordsIds = array();
         foreach($words as $_w) {
             $wordsIds[$_w->id] = $_w->id; 
@@ -86,7 +86,7 @@ class MovieSubtitle extends Model
             $limit = "limit $n";
         }
 
-        return DB::select('SELECT * FROM subtitle_words  INNER JOIN words ON words.id = subtitle_words.word_id where words.id NOT IN ('.implode(',',$wordsIds).') AND subtitle_id = '.$this->id.' order by words.frequence_subtitle desc '.$limit);
+        return DB::select('SELECT * FROM subtitle_words  INNER JOIN words ON words.id = subtitle_words.word_id where words.id NOT IN ('.implode(',',$wordsIds).') AND subtitle_id = '.$this->id.' order by words.frequence_spoken desc '.$limit);
     }
 
 }

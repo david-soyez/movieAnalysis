@@ -57,7 +57,7 @@ class SubtitleConversation extends Model
 
     public function findScore($cword75) {
         $wordsSubResult= $this->findWordsFrequences();
-        $wordsResult= DB::select('SELECT * FROM words order by frequence_subtitle desc limit '.$cword75);
+        $wordsResult= DB::select('SELECT * FROM words order by frequence_spoken limit '.$cword75);
 
         $words = array();
         $sumSub = 0;

@@ -32,7 +32,7 @@ class WordsFromLemmasSeeder extends Seeder
                 $word = $data[1];
                 $PoS = $data[2]; // Part of speech (grammatical word class
                 $lemmaWord  = $data[3];
-                $frequence = $data[4];// Rounded frequency per million word tokens (down to a minimum of 10 occurrences of a lemma per million)
+                $frequence = $data[4] * 1000000;// Rounded frequency per million word tokens (down to a minimum of 10 occurrences of a lemma per million)
                 $range = $data[5]; // Range: number of sectors of the corpus (out of a maximum of 100) in which the word occurs 
                 $dispersion = $data[6]; // Dispersion value (Juilland's D) from a minimum of 0.00 to a maximum of 1.00.
 
@@ -75,24 +75,20 @@ class WordsFromLemmasSeeder extends Seeder
                     $word = $lemmaWord;
                 }
 
-                $wordObj = Word::where(array('language'=>$lang,'value'=>$word))->first();
-                // word should not exist
-                if(empty($wordObj)) {
-                    $wordObj = new Word();
-                    $wordObj->language = $lang;
-                    $wordObj->value = $word;
-                    $wordObj->pos = $PoS;
-                    $wordObj->frequence_written = $frequence;
-                    $wordObj->dispersion = $dispersion;
-                    $wordObj->range = $range;
-                    if($is_lemma) {
-                        $lemmaWordObj->is_lemma = true;
-                        $lemmaWordObj->save();
-                        $wordObj->pos = $lemmaWordObj->pos;
-                        $wordObj->lemma_word_id = $lemmaWordObj->id;
-                    }
-                    $wordObj->save();
-                }                
+                $wordObj = new Word();
+                $wordObj->language = $lang;
+                $wordObj->value = $word;
+                $wordObj->pos = $PoS;
+                $wordObj->frequence_written = $frequence;
+                $wordObj->dispersion = $dispersion;
+                $wordObj->range = $range;
+                if($is_lemma) {
+                    $lemmaWordObj->is_lemma = true;
+                    $lemmaWordObj->save();
+                    $wordObj->pos = $lemmaWordObj->pos;
+                    $wordObj->lemma_word_id = $lemmaWordObj->id;
+                }
+                $wordObj->save();
 
                 $previousWord = $wordObj;
             }
@@ -113,15 +109,15 @@ class WordsFromLemmasSeeder extends Seeder
                 $row++;
                 if($row <= 2)
                     continue;
-                //echo "row $row\n";
 
-                $word = $data[1];// word
-                $PoS= $data[2];// pos
-                $frequence_spoken = $data[3];// Frequency (per million words) in speech
+                echo "row $row\n";
+
+                $word = trim($data[1],' *');// word
+                $PoS = $data[2];// pos
+                $frequence_spoken = $data[3]* 1000000;// Frequency (per million words) in speech
                 $comparison = $data[4];// + or -
                 $likehood = $data[5];// Log likelihood (a measure of distinctiveness between speech and writing)
-                $frequence_written= $data[6];// Frequency (per million words) in writing
-
+                $frequence_written= $data[6] * 1000000;// Frequency (per million words) in writing
 
                 $skipArray = array('1','2','3','4','5','6','7','8','9','0','$','!','&','£','µ','+','€');
                 if(in_array($word[0], $skipArray)) {
@@ -129,10 +125,13 @@ class WordsFromLemmasSeeder extends Seeder
                 }
 
                 // search the word in the database
-                $wordObj = Word::where(array('language'=>$lang,'value'=>$word))->first();
+                $wordObj = Word::where(array('language'=>$lang,'value'=>$word,'pos'=>$PoS))->first();
                 // word should exist
-                if(empty($wordObj)) {
-                    die("$word does not exist\n");
+                if(!empty($wordObj)) {
+                    $wordObj->frequence_spoken = $frequence_spoken;
+                    $wordObj->frequence_written = $frequence_written;
+                    echo "Found and saved $word\n";
+                    $wordObj->save();
                 }
             }
         }
