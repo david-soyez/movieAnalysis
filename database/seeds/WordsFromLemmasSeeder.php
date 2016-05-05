@@ -12,8 +12,8 @@ class WordsFromLemmasSeeder extends Seeder
      */
     public function run()
     { 
-        $this->importSpokenFrequences();
-        return true;
+        //$this->importSpokenFrequences();
+        //return true;
 
         $lang = 'en';
 
@@ -125,7 +125,7 @@ class WordsFromLemmasSeeder extends Seeder
                 }
 
                 // search the word in the database
-                $wordObj = Word::where(array('language'=>$lang,'value'=>$word,'pos'=>$PoS))->first();
+                $wordObj = Word::whereRaw("BINARY `value`= ? AND language = ?", array($word,$lang))->first();
                 // word should exist
                 if(!empty($wordObj)) {
                     $wordObj->frequence_spoken = $frequence_spoken;

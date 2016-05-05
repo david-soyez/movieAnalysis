@@ -25,6 +25,11 @@ class CreateWordsTable extends Migration
             $table->enum('language',array('en','fr','es','de','it'));
             $table->boolean('is_lemma')->default(0); // if this is a root word
             $table->index('lemma_word_id');
+            $table->index('value');
+            $table->index('frequence_spoken');
+            $table->index('frequence_written');
+            $table->index('frequence_movie');
+            $table->index('language');
          });    
     }
 

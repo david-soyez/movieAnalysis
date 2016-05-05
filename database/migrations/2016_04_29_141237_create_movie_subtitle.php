@@ -29,6 +29,8 @@ class CreateMovieSubtitle extends Migration
             $table->integer('sum_strlen');
             $table->integer('mean_strlen');
             $table->integer('std_strlen');
+            $table->integer('count_badwords');
+            $table->integer('count_contractions');
             $table->integer('delay_conversation');
             $table->boolean('is_active')->default(0);
             $table->boolean('is_deleted')->default(0);

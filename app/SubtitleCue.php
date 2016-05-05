@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\MovieSubtitle;
+use App\SubtitleWord;
 use DB;
 
 class SubtitleCue extends Model
@@ -52,63 +53,64 @@ class SubtitleCue extends Model
 
         // write the words to database
         foreach($frequences as $word => $frequence) {
-            $wordObj=Word::where(array('value'=>strtolower($word),'language'=>$this->subtitle->language))->orderBy('frequence_spoken','desc')->first();
+ 
+            $wordObj=Word::where(array('value'=>($word),'language'=>$this->subtitle->language))
+                ->orderBy('frequence_spoken','desc')->orderBy('frequence_written','desc')->orderBy('dispersion','desc')->orderBy('range','desc')->limit(1)->first();
+
             if(empty($wordObj)) {
                 $wordObj = new Word();
                 $wordObj->value = strtolower($word);
                 $wordObj->language = $this->subtitle->language;
                 $wordObj->frequence_movie = 0;
-                $wordObj->frequence_book = 0;
+                $wordObj->frequence_spoken = 0;
+                $wordObj->frequence_written = 0;
             } else {
+                // don't take proper name
+                if($wordObj->pos == 'NoP') {
+                    continue;
+                } 
+                
                 // if word existing try to match the lemma if one existing
-                if($wordObj->lemma_word_id != null) {
+                if($wordObj->lemma != null) {
                     // adds the frequence before changing word
-                    $wordObj->frequence_movie += $frequence;
-                    $wordObj->save();
-
-                    $wordObj=Word::where(array('lemma_word_id'=>$wordObj->lemma_word_id))->orderBy('frequence_spoken','desc')->first();
+                    $wordObj->lemma->frequence_movie += $frequence;
+                    $wordObj->lemma->save();
                 }
             }
                 $wordObj->frequence_movie += $frequence;
                 $wordObj->save();
-        }
 
-        // adds the subtitle_words to database
-        $this->addSubtitleWords();
-    }
+                // save the subtitleWord
+                $subWordObj=SubtitleWord::where(array('word_id'=>$wordObj->id,'subtitle_id'=>$this->subtitle_id))->first();
+                if(empty($subWordObj)) {
+                    $subWordObj = new SubtitleWord();
+                    $subWordObj->subtitle_id= $this->subtitle->id;
+                    $subWordObj->word_id = $wordObj->id;
+                    $subWordObj->frequence= 0;
+                }
 
-    protected function addSubtitleWords() {
-        $frequences = $this->findWordsFrequences();
-
-        // write the words to database
-        foreach($frequences as $word => $frequence) {
-            $wordObj=Word::where(array('value'=>strtolower($word),'language'=>$this->subtitle->language))->orderBy('frequence_spoken','desc')->first();
-            if(empty($wordObj)) {
-                continue;
-            }
-
-            // if word existing try to match the lemma if one existing
-            if($wordObj->lemma_word_id != null) {
-                $wordObj=Word::where(array('lemma_word_id'=>$wordObj->lemma_word_id))->first();
-            }
-
-            $subWordObj=SubtitleWord::where(array('word_id'=>$wordObj->id,'subtitle_id'=>$this->subtitle_id))->first();
-            if(empty($subWordObj)) {
-                $subWordObj = new SubtitleWord();
-                $subWordObj->subtitle_id= $this->subtitle->id;
-                $subWordObj->word_id = $wordObj->id;
-                $subWordObj->frequence= 0;
-            }
-
-            $subWordObj->frequence += $frequence;
-            $subWordObj->save();
+                $subWordObj->frequence += $frequence;
+                $subWordObj->save();                
         }
 
     }
 
     public function findCovering($coverPercent) {
         $wordsSubResult= $this->findWordsFrequences();
-        $words= DB::select('SELECT * FROM words order by frequence_spoken desc');
+        $words= DB::select('
+SELECT 
+     w1.id AS id1, w2.id AS id2,w1.value AS value1, w2.value AS value2
+FROM
+    paretobook.words AS w1
+        LEFT JOIN
+    words AS w2 ON w1.id = w2.lemma_word_id
+where isnull(w1.lemma_word_id)    
+ORDER BY 
+
+ w1.frequence_spoken desc, w2.frequence_spoken desc,w1.frequence_written DESC, w2.frequence_written DESC, w1.dispersion desc, w2.dispersion desc, w1.range desc,
+ w2.range desc
+
+LIMIT 100000');
 
         $wordsSub = array();
         $sumSub = 0;
@@ -121,15 +123,24 @@ class SubtitleCue extends Model
         $percent_material = 0;
 
         $sum = 0;
-        $n = 0;
+
+        $_words = array();
         foreach($words as $word) {
+            $_words[$word->value1] = $word->value1;
+            $_words[$word->value2] = $word->value2;
+        }
+        $words = $_words;
+
+        // finds the row number in $words
+        $n = 0;
+        foreach($words as $id => $word) {
             $n++;
-            if(isset($wordsSub[$word->value])) {
-                $sum += $wordsSub[$word->value];
-                $percent_material = ($sum*100)/$sumSub;
-                if($percent_material >= $coverPercent)
-                   break;
+            if(isset($wordsSub[$word])) {
+                $sum += $wordsSub[$word];
             }
+            $percent_material = ($sum*100)/$sumSub;
+            if($percent_material >= $coverPercent)
+               break;
         }
 
         return $n;

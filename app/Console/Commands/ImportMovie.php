@@ -61,22 +61,23 @@ class ImportMovie extends Command
      */
     public function handle()
     {
+        $language = 'en';
+        bcscale(14);
+ 
         $filename = getcwd().'/'.$this->argument('filename'); 
         
         // removes trailing white spaces in file
         $content = file_get_contents($filename);
-        file_put_contents($filename,trim($content));
-
-        $language = 'en';
-        bcscale(14);
 
         // convert english contractions
         if($language == 'en') {
             $content = Word::reverseEnglishContractions($content);
-        }
-        
+        }       
+ 
+        file_put_contents($filename.'.tmp',trim($content));
+
         // opens the subtitle file
-        $this->subrip = new SubripFile($filename);
+        $this->subrip = new SubripFile($filename.'.tmp');
 
         if(empty($this->subrip)) {
             die('error opening subtitle. exiting.');
@@ -138,7 +139,7 @@ class ImportMovie extends Command
             $cueObject->cps = $cue->getCPS();
             $cueObject->strlen = $cue->strlen();
             $cueObject->addWordsFrequences();
-            $cueObject->score = $cueObject->findCovering(80);
+            //$cueObject->score = $cueObject->findCovering(80);
             $cueObject->save();
             $this->cues[] = $cueObject;
         }
@@ -155,6 +156,7 @@ class ImportMovie extends Command
         $i=0;
         foreach($this->cues as $cue) {
             $i++;
+            echo "Finding conversation for cue #$i\n";
             if($i==1) {
                 $currentConversation = new SubtitleConversation();
                 $currentConversation->subtitle_id = $subtitleObj->id;
@@ -242,7 +244,7 @@ class ImportMovie extends Command
         }
 
         // computes subtitle score
-        $cword80 = $subtitleObj->findCovering(80);
+        $cword80 = $subtitleObj->findCovering(90);
 
         // loops through conversation to score them
         $conversationScore = array();
@@ -252,6 +254,7 @@ class ImportMovie extends Command
         $i=0;
         foreach($this->conversations as $conversation) {
             $i++;
+            echo "Find score for cword $cword80 in conversation #$i\n";
             // finds how much you can read with these words
             $conversation->score = $conversation->findScore($cword80);
             $conversation->save();
@@ -281,6 +284,8 @@ class ImportMovie extends Command
         $subtitleObj->std_readingspeed = $this->sd($meanReadingSpeed);
         $subtitleObj->delay_conversation = $this->delay_conversation;
         $subtitleObj->cword_80 = $cword80;
+        $subtitleObj->count_badwords = Word::$count_badwords;
+        $subtitleObj->count_contractions = Word::$count_contractions;
         $subtitleObj->save();
     }
 

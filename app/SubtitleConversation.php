@@ -56,13 +56,17 @@ class SubtitleConversation extends Model
     }
 
     public function findScore($cword75) {
+        static $wordsResult;
         $wordsSubResult= $this->findWordsFrequences();
-        $wordsResult= DB::select('SELECT * FROM words order by frequence_spoken limit '.$cword75);
+        if(!isset($wordsResult)) {
+            $wordsResult= DB::select('SELECT w1.value as value1,w2.value as value2 FROM paretobook.words as w1 lEFT JOIN words as w2 ON w1.id = w2.lemma_word_id order by w1.dispersion desc, w1.frequence_spoken desc,w1.frequence_written desc, w1.range desc limit '.$cword75);
+        }
 
         $words = array();
         $sumSub = 0;
         foreach($wordsResult as $word) {
-            $words[$word->value] = $word; 
+            $words[$word->value1] = $word; 
+            $words[$word->value2] = $word; 
         }
 
         $sum = 0; // total to understand the dialogue

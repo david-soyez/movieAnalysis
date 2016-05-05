@@ -51,7 +51,7 @@ function drawRare{{ $movie->id}}() {
  </script>
 <b>Hard words:</b>
 
-@foreach($movie->subtitle()->getHardWords(10) as $word)
-{{ $word->value }}   ({{ $word->frequence}}) -   
+@foreach($movie->subtitle()->getHardWords(30) as $word)
+{{ $word->value }}  ({{ $word->id }}) ({{ $word->frequence}}) -   
 @endforeach
 <hr>

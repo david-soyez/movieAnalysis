@@ -9,8 +9,17 @@ class Word extends Model
 {
     public $timestamps = false;
     public static $count_contractions = 0;
+    public static $count_badwords= 0;
 
     static public $words = array();
+
+    /**
+     * Get the lemma word.
+     */
+    public function lemma()
+    {
+        return $this->hasOne('App\Word','lemma_word_id');
+    }
 
     /*
      * Returns the number of words equals to 20% of the total
@@ -31,9 +40,10 @@ class Word extends Model
     }
 
     public static function reverseEnglishContractions($text) {
-        $iReplaced = 0;
-
+        $iReplaced = $iBadWords = 0;
+        $count = 0;
         $contractions = array (
+         "cannot" => "can not",
          "ain't" =>"am not",
          "aren't" =>"are not",
          "can't" =>"cannot",
@@ -459,9 +469,9 @@ class Word extends Model
         );
 
         foreach($relaxed as $relaxe => $meaning) {
-            $text = preg_replace('/\b'.$relaxe.'\b/u',$meaning,$text,-1,$count);
+            $text = preg_replace('/\b'.$relaxe.'\b/i',$meaning,$text,-1,$count);
+            $iReplaced += $count;
         }
-        $iReplaced += $count;
 
         $contraction2 = array(
             "'d"=> "would",
@@ -474,11 +484,28 @@ class Word extends Model
         );
 
         foreach($relaxed as $relaxe => $meaning) {
-            $text = preg_replace('/'.$relaxe.'\b/u',$meaning,$text,-1,$count);
+            $text = preg_replace('/'.$relaxe.'\b/i',$meaning,$text,-1,$count);
+            $iReplaced += $count;
         }
-        $iReplaced += $count;
 
         self::$count_contractions = $iReplaced;
+
+        // bad words
+        $badwords = json_decode(file_get_contents(__DIR__.'/../database/seeds/badwords.json'),true);
+
+        foreach(array_keys($badwords) as $badword) {
+            $text = preg_replace('/\b'.$badword.'\b/i',' ',$text,-1,$count);
+            $iBadWords += $count;
+        }
+
+        $badwords = json_decode(file_get_contents(__DIR__.'/../database/seeds/badwords2.json'),true);
+
+        foreach(array_keys($badwords) as $badword) {
+            $text = preg_replace('/\b'.$badword.'\b/i',' ',$text,-1,$count);
+            $iBadWords += $count;
+        }
+        self::$count_badwords= $iBadWords;
+
         return $text;
     }
 }
