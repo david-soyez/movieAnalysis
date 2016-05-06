@@ -15,6 +15,18 @@ class HomeController extends Controller
      *
      * @return Response
      */
+    public function index()
+    {
+        $moviesObj= Movie::all();
+
+        return view('home.view', ['movies' => $moviesObj]);
+    }    
+    
+    /**
+     * Show the homepage.
+     *
+     * @return Response
+     */
     public function view()
     {
         $moviesObj= Movie::all();

@@ -17,6 +17,7 @@ class Kernel extends ConsoleKernel
         Commands\ImportBook::class,
         Commands\ImportWords::class,
         Commands\ImportMovie::class,
+        Commands\TheMoviedb::class,
     ];
 
     /**

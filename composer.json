@@ -15,12 +15,26 @@
             "reference": "5ce84160a5654c28e5e2851e51fbbe84d3275695"
             }
         } 
-    }],
+    },
+    {
+        "type": "package",
+        "package": {
+            "name": "FabianBeiner/PHP-IMDB-Grabber",
+            "version": "master",
+            "source": {
+            "type": "git",
+            "url": "https://github.com/FabianBeiner/PHP-IMDB-Grabber.git",
+            "reference": "7955217a5196eee8a865da3c5917f3b8836b24c7"
+            }
+        } 
+    }
+    ],
     "require": {
         "php": ">=5.5.9",
         "laravel/framework": "5.2.*",
         "Vaporbook/BookGluttonEpub": "dev-master",
-        "captioning/captioning": "2.*"
+        "captioning/captioning": "2.*",
+        "FabianBeiner/PHP-IMDB-Grabber": "dev-master"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

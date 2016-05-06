@@ -1,24 +1,23 @@
 var OS = require('opensubtitles-api');
-var OpenSubtitles = new OS('OSTestUserAgent');
 
-var srt = {};
+var call_1, call_2, call_3;
+var start = Date.now(), ms1, ms2, ms3;
+var imdbid = '0898266', show = 'The Big Bang Theory', s = '01', ep = '01';
 
-OpenSubtitles.login()
-        .then(function(token){
-            srt.start(token);
-        })
-    .catch(function(err){
-            console.log(err);
-        });
+/** HTTPS search **/
+var OpenSubtitles = new OS({
+        useragent: 'OSTestUserAgent',
+        endpoint: 'https://api.opensubtitles.org:443/xml-rpc'
+});
 
-srt.start = function(token) {
-        OpenSubtitles.search({
-            token: token,
-            sublanguageid: 'eng',
-            imdbid: '3774114'
-        }).then(function (subtitles) {
-            console.log(subtitles);
-    });
-
-}
+OpenSubtitles.search({
+//        season: s,
+ //       episode: ep,
+        imdbid: 'tt1267297',
+  //      limit: 'all'
+        sublanguageid: 'eng'
+})
+.then(function (subtitles) {
+    console.log(subtitles);
+})
 

@@ -11,7 +11,7 @@
 |
 */
 
-Route::get('/', 'HomeController@compare');
+Route::get('/', 'HomeController@index');
 Route::get('/compare', 'HomeController@view');
 
 Route::get('book/view/{title}', 'BookController@view')->name('title');
