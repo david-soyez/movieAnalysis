@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1de04582b37868cb3d8ee26fec9e7b04",
-    "content-hash": "390315309c09d1de9678cb3f129625f9",
+    "hash": "04aa4ca54fb7487e273c17505fc6cd8f",
+    "content-hash": "99f0a1f1b47a087d4cf9e82ce5975613",
     "packages": [
         {
             "name": "FabianBeiner/PHP-IMDB-Grabber",
@@ -34,13 +34,13 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/captioning/captioning.git",
-                "reference": "69ef7a1a21515a31d53a67fc034ef71709a47956"
+                "url": "https://github.com/david-soyez/captioning.git",
+                "reference": "fac22b1b1521311790ab5f4f807134f2ceb02f74"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/captioning/captioning/zipball/69ef7a1a21515a31d53a67fc034ef71709a47956",
-                "reference": "69ef7a1a21515a31d53a67fc034ef71709a47956",
+                "url": "https://api.github.com/repos/david-soyez/captioning/zipball/fac22b1b1521311790ab5f4f807134f2ceb02f74",
+                "reference": "fac22b1b1521311790ab5f4f807134f2ceb02f74",
                 "shasum": ""
             },
             "require": {
@@ -55,7 +55,6 @@
                     "Captioning": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -78,7 +77,10 @@
                 "vtt",
                 "webvtt"
             ],
-            "time": "2016-04-15 21:50:15"
+            "support": {
+                "source": "https://github.com/david-soyez/captioning/tree/master"
+            },
+            "time": "2016-05-07 19:40:06"
         },
         {
             "name": "classpreloader/classpreloader",

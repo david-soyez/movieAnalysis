@@ -29,16 +29,8 @@
         } 
     },
     {
-        "type": "package",
-        "package": {
-            "name": "david-soyez/captioning",
-            "version": "master",
-            "source": {
-            "type": "git",
-            "url": "https://github.com/david-soyez/captioning.git",
-            "reference": "de17d6eddc632788d08996484816bacd8558f144"
-            }
-        } 
+        "type": "vcs",
+        "url": "https://github.com/david-soyez/captioning.git"
     }
     ],
     "require": {
