@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "88230ec4816edf291c74442d638ccdfd",
-    "content-hash": "2b621e8e47697380876870be401ef5af",
+    "hash": "1de04582b37868cb3d8ee26fec9e7b04",
+    "content-hash": "390315309c09d1de9678cb3f129625f9",
     "packages": [
         {
             "name": "FabianBeiner/PHP-IMDB-Grabber",
@@ -31,7 +31,7 @@
         },
         {
             "name": "captioning/captioning",
-            "version": "2.3.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/captioning/captioning.git",
@@ -3078,6 +3078,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "vaporbook/bookgluttonepub": 20,
+        "captioning/captioning": 20,
         "fabianbeiner/php-imdb-grabber": 20
     },
     "prefer-stable": false,

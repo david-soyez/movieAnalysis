@@ -31,6 +31,7 @@ class CreateMovieTable extends Migration
             $table->text('production_companies')->nullable();
             $table->text('production_countries')->nullable();
             $table->text('spoken_languages')->nullable();
+            $table->boolean('is_pending')->default(0);
             $table->boolean('is_active')->default(0);
             $table->boolean('is_deleted')->default(0);
             $table->timestamps();

@@ -53,7 +53,7 @@ class TheMoviedb extends Command
             die('Error retrieving data');
         }
         $movies = json_decode($json,true);
-
+        $this->output->progressStart(count($movies['results']));
         foreach($movies['results'] as $key => $movie) {
 
             // check if already existing
@@ -76,7 +76,7 @@ class TheMoviedb extends Command
             $movieObj->video = $movie['video'];
             $movieObj->vote_average = $movie['vote_average'];
             $saved = $movieObj->save();
-            echo "Adding movie ".$movie['title']."...".($saved?'ok':'error')."\n";
+            //echo "Adding movie ".$movie['title']."...".($saved?'ok':'error')."\n";
 
             // creates genres
             foreach($movie['genre_ids'] as $genre_id) {
@@ -84,7 +84,7 @@ class TheMoviedb extends Command
                 $moviegenreObj->movie_id = $movieObj->id;
                 $moviegenreObj->genre_id = $genre_id;
                 $saved = $moviegenreObj->save();
-                echo "Adding genre ".$genre_id."...".($saved?'ok':'error')."\n";
+                //echo "Adding genre ".$genre_id."...".($saved?'ok':'error')."\n";
             }
 
             // get the movie page
@@ -111,10 +111,13 @@ class TheMoviedb extends Command
             
             // activate movie
 
-            $movieObj->is_active = true;
+            $movieObj->is_active = false;
+            $movieObj->is_pending = true;
             $movieObj->save();
-            echo "----------------------------------------------------------------\n";
+            $this->output->progressAdvance();
+            //echo "----------------------------------------------------------------\n";
         }
+        $this->output->progressFinish();
     }
 
 

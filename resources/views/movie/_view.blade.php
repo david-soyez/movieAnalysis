@@ -1,9 +1,9 @@
 <?php $conversations = $movie->subtitle()->conversations;
 ?>
-<b>Complexity score for 75% of comprehension of the full movie: {{ $movie->subtitle()->cword_80 }}</b><br>
   <div id="chart_divRare{{ $movie->id}}" style="height:400px"></div>
 
 <script>
+google.charts.load('current', {packages: ['corechart', 'line']});
 google.charts.setOnLoadCallback(drawRare{{ $movie->id}});
 
 function drawRare{{ $movie->id}}() {
@@ -37,7 +37,7 @@ function drawRare{{ $movie->id}}() {
       bar: {groupWidth: 90},
           colors: ['blue','green'],
         hAxis: {
-          title: '{{ $movie->title}} (minutes)'
+          title: '{{ $movie->title}} (length in minutes)'
         },
         series: {1: {type: 'bar',targetAxisIndex:1},0: {type: 'bar',targetAxisIndex:0}},
         vAxes: { 0: {logScale: false,title: 'Dialogue streak score',maxValue:300}, 1: {title: 'Comprehension',maxValue:300} },
@@ -49,9 +49,4 @@ function drawRare{{ $movie->id}}() {
       chart.draw(data, options);
     }
  </script>
-<b>Hard words:</b>
 
-@foreach($movie->subtitle()->getHardWords(30) as $word)
-{{ $word->value }}  ({{ $word->id }}) ({{ $word->frequence}}) -   
-@endforeach
-<hr>

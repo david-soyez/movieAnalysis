@@ -27,13 +27,25 @@
             "reference": "7955217a5196eee8a865da3c5917f3b8836b24c7"
             }
         } 
+    },
+    {
+        "type": "package",
+        "package": {
+            "name": "david-soyez/captioning",
+            "version": "master",
+            "source": {
+            "type": "git",
+            "url": "https://github.com/david-soyez/captioning.git",
+            "reference": "de17d6eddc632788d08996484816bacd8558f144"
+            }
+        } 
     }
     ],
     "require": {
         "php": ">=5.5.9",
         "laravel/framework": "5.2.*",
         "Vaporbook/BookGluttonEpub": "dev-master",
-        "captioning/captioning": "2.*",
+        "captioning/captioning": "dev-master",
         "FabianBeiner/PHP-IMDB-Grabber": "dev-master"
     },
     "require-dev": {

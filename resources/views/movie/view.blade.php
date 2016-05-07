@@ -1,5 +1,5 @@
 @extends('layouts.master')
 
 @section('content')
- @include('book._view')
+ @include('movie._view')
 @endsection

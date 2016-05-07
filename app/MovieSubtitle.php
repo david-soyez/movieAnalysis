@@ -11,6 +11,14 @@ use DB;
 class MovieSubtitle extends Model
 {
     /**
+     * Get the movie that owns the cue.
+     */
+    public function movie()
+    {
+        return $this->belongsTo('App\Movie', 'movie_id');
+    }
+    
+    /**
      * Get the conversations.
      */
     public function conversations()

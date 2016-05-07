@@ -17,7 +17,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $moviesObj= Movie::all();
+        $moviesObj= Movie::where(array('is_active'=>true,'is_pending'=>false,'is_deleted'=>false))->get();
 
         return view('home.view', ['movies' => $moviesObj]);
     }    
@@ -27,11 +27,11 @@ class HomeController extends Controller
      *
      * @return Response
      */
-    public function view()
+    public function view($id)
     {
-        $moviesObj= Movie::all();
+        $movieObj= Movie::where(array('id'=>$id))->first();
 
-        return view('home.view', ['movies' => $moviesObj]);
+        return view('movie.view', ['movie' => $movieObj]);
     }
 
     /**

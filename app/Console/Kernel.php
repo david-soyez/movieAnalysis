@@ -18,6 +18,8 @@ class Kernel extends ConsoleKernel
         Commands\ImportWords::class,
         Commands\ImportMovie::class,
         Commands\TheMoviedb::class,
+        Commands\SubtitleFinderCommand::class,
+        Commands\SubtitleDownloaderCommand::class,
     ];
 
     /**

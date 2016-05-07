@@ -4,7 +4,10 @@
             </header>
             <div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
               <div class="mdl-card__supporting-text">
-                <h4>{{ $movie->title }}</h4>
+
+<h4><a class="movie_preview_title_rate" id="movie_{{ $movie->id}}" href="/movie/{{ $movie->id}}/{{ $movie->title}}" title="{{ $movie->title }}" alt="{{ $movie->title }}">{{ $movie->title }}</a>
+        <span class="preview_movie_rate"><i class="material-icons">hearing</i>{{ $movie->subtitle()->cword_80}}</span>
+</h4>
                 {{ $movie->overview}}
               </div>
               <div class="mdl-card__actions">

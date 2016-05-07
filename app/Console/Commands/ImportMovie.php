@@ -35,14 +35,14 @@ class ImportMovie extends Command
      *
      * @var string
      */
-    protected $signature = 'pareto:importmovie {filename}';
+    protected $signature = 'pareto:next';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Import movie from srt subtitle file';
+    protected $description = 'Process the next pending subtitle';
 
     /**
      * Create a new command instance.
@@ -61,51 +61,69 @@ class ImportMovie extends Command
      */
     public function handle()
     {
-        $language = 'en';
+        // get the next subtitle to process
+        $subtitleObj = MovieSubtitle::where(array('is_error'=>false,'is_pending'=>true))->first();
+        
+        // if no pending subtitle
+        if(empty($subtitleObj)) {
+            $this->error('No pending subtitle.');
+            die();
+        }
+
         bcscale(14);
  
-        $filename = getcwd().'/'.$this->argument('filename'); 
+        $filename = __DIR__.'/../../../storage/'.$subtitleObj->filename; 
         
         // removes trailing white spaces in file
         $content = file_get_contents($filename);
 
         // convert english contractions
-        if($language == 'en') {
+        if($subtitleObj->movie->original_language == 'en') {
             $content = Word::reverseEnglishContractions($content);
         }       
  
         file_put_contents($filename.'.tmp',trim($content));
+        
 
-        // opens the subtitle file
-        $this->subrip = new SubripFile($filename.'.tmp');
+        try {
+            // opens the subtitle file
+            $this->subrip = new SubripFile($filename.'.tmp');
+        } catch(Exception $e) {
+            $subtitleObj->is_error = true;
+            $subtitleObj->code_error = var_export($e,true);
+            $subtitleObj->save();
+            die();
+        }
 
         if(empty($this->subrip)) {
+            $subtitleObj->is_error = true;
+            $subtitleObj->code_error = 'error opening file empty';
+            $subtitleObj->save();
             die('error opening subtitle. exiting.');
         }
 
-        // creates the movie in database
-        $movieObj = new Movie();
-        $movieObj->title = $filename;
-        $movieObj->language = $language;
-        $movieObj->save();
+        // loads the movie in database
+        $movieObj = $subtitleObj->movie;
 
-        if(empty($movieObj)) {
-            die('error creating movie in database. exiting.');
-        }
-
-        // creates the subtitle in database
-        $subtitleObj = new MovieSubtitle();
-        $subtitleObj->movie_id = $movieObj->id;
-        $subtitleObj->filename = $filename;
-        $subtitleObj->language = $language;
-        $subtitleObj->save();
-        
-        if(empty($subtitleObj)) {
-            die('error creating subtitle in database. exiting.');
-        }
 
         // regroups the lines in every cues to remove unecessary line breaks
         $this->regroupCuesLines();
+
+        // finds the length of the movie
+        $movieLength = 0;
+        if(($lastCue = $this->subrip->getLastCue())!=null) {
+            $movieLength = round($lastCue->getStopMS()/1000/60,2);
+        }
+
+        // is not a movie if length < 15 minutes
+        if($movieLength <= 15) {
+            $error = 'Length is too short to be a movie or a tv show: '.$movieLength.' minutes.';
+            $subtitleObj->is_error = true;
+            $subtitleObj->code_error = $error;
+            $subtitleObj->save();
+            $this->error($error);
+            return false;
+        } 
 
         // finds the best delay between conversation
         $delays = array();
@@ -140,6 +158,18 @@ class ImportMovie extends Command
             $cueObject->strlen = $cue->strlen();
             $cueObject->addWordsFrequences();
             //$cueObject->score = $cueObject->findCovering(80);
+
+            // do not take ads
+            if(stripos($cueObject->caption,'opensubtitle')!== false ||
+                (stripos($cueObject->caption, 'rate')!== false && stripos($cueObject->caption, 'subtitle')!== false) 
+                || ($i >= count($this->subrip->getCues())-3 && stripos($cueObject->caption,'made by')!== false)
+                || ($i >= count($this->subrip->getCues())-3 && stripos($cueObject->caption,'rate')!== false)
+                || ($i >= count($this->subrip->getCues())-3 && stripos($cueObject->caption,'support')!== false)
+            ) {
+                continue;
+            } 
+
+            
             $cueObject->save();
             $this->cues[] = $cueObject;
         }
@@ -286,7 +316,13 @@ class ImportMovie extends Command
         $subtitleObj->cword_80 = $cword80;
         $subtitleObj->count_badwords = Word::$count_badwords;
         $subtitleObj->count_contractions = Word::$count_contractions;
+        $subtitleObj->is_pending = 0;
         $subtitleObj->save();
+
+        // set the movie active
+        $movieObj->is_pending = false;
+        $movieObj->is_active = true;
+        $movieObj->save();
     }
 
     protected function regroupLines($lines) {
