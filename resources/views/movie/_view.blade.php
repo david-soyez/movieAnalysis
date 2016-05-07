@@ -10,7 +10,7 @@ function drawRare{{ $movie->id}}() {
 
       var data = new google.visualization.DataTable();
       data.addColumn('number', 'X');
-      data.addColumn('number', 'Dialogue streak');
+      data.addColumn('number', 'Dialogue streak (#words)');
       data.addColumn('number', 'Comprehension');
 
       data.addRows([
@@ -40,7 +40,7 @@ function drawRare{{ $movie->id}}() {
           title: '{{ $movie->title}} (length in minutes)'
         },
         series: {1: {type: 'bar',targetAxisIndex:1},0: {type: 'bar',targetAxisIndex:0}},
-        vAxes: { 0: {logScale: false,title: 'Dialogue streak score',maxValue:300}, 1: {title: 'Comprehension',maxValue:300} },
+        vAxes: { 0: {logScale: false,title: 'Dialogue streak (#words)',maxValue:300}, 1: {title: 'Comprehension',maxValue:300} },
   
       };
 
