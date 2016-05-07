@@ -1,7 +1,7 @@
 ﻿1
 00:00:06,000 --> 00:00:12,074
-Advertise your product or brand here
-contact www.OpenSubtitles.org today
+www.seedr.co.il - come visit to stream 
+your torrents with subtitles search
 
 2
 00:00:20,187 --> 00:00:21,814
@@ -3775,4 +3775,4 @@ Come on.
 909
 01:51:53,305 --> 01:51:59,753
 Support us and become VIP member 
-to remove all ads from OpenSubtitles.org
+to remove all ads from www.OpenSubtitles.org

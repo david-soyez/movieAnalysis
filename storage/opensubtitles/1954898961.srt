@@ -1,7 +1,6 @@
 ﻿1
 00:00:06,000 --> 00:00:12,074
-Advertise your product or brand here
-contact www.OpenSubtitles.org today
+-= www.OpenSubtitles.org =-
 
 2
 00:01:01,528 --> 00:01:03,168
