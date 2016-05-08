@@ -70,6 +70,8 @@ class ImportMovie extends Command
             die();
         }
 
+        $this->info($subtitleObj->title);
+
         bcscale(14);
  
         $filename = __DIR__.'/../../../storage/'.$subtitleObj->filename; 
@@ -78,6 +80,7 @@ class ImportMovie extends Command
         $content = file_get_contents($filename);
 
         // convert english contractions
+        $this->info('Finding contractions...');
         if($subtitleObj->movie->original_language == 'en') {
             $content = Word::reverseEnglishContractions($content);
         }       
@@ -85,6 +88,7 @@ class ImportMovie extends Command
         file_put_contents($filename.'.tmp',trim($content));
         
 
+        $this->info('Opening srt file...');
         try {
             // opens the subtitle file
             $this->subrip = new SubripFile($filename.'.tmp');
@@ -107,6 +111,7 @@ class ImportMovie extends Command
 
 
         // regroups the lines in every cues to remove unecessary line breaks
+        $this->info('Grouping multi-lines in cues...');
         $this->regroupCuesLines();
 
         // finds the length of the movie
@@ -142,9 +147,11 @@ class ImportMovie extends Command
         
         // creates cues objects
         $i=0;
+        $this->info('Writing cues...');
+        $this->output->progressStart(count($this->subrip->getCues()));
         foreach($this->subrip->getCues() as $cue) {
+            $this->output->progressAdvance();
             $i++;
-            echo "Writing cues to database $i/".count($this->subrip->getCues())."\n";
             $cueObject = new SubtitleCue();
             $cueObject->subtitle_id = $subtitleObj->id;
             $cueObject->timeline_start = $cue->getStartMS();
@@ -153,7 +160,6 @@ class ImportMovie extends Command
             $cueObject->caption = trim(preg_replace('#\([^\)]*\)#',' ',$cueObject->caption));
 
             // do not take ads
-            var_dump($cueObject->caption);
             if($cueObject->caption == '' || stripos($cueObject->caption,'opensubtitle')!== false ||
                 (stripos($cueObject->caption, 'rate')!== false && stripos($cueObject->caption, 'subtitle')!== false) 
                 || ($i >= count($this->subrip->getCues())-3 && stripos($cueObject->caption,'made by')!== false)
@@ -171,13 +177,10 @@ class ImportMovie extends Command
             $cueObject->strlen = $cue->strlen();
             $cueObject->addWordsFrequences();
             //$cueObject->score = $cueObject->findCovering(80);
-
-
-
-            
             $cueObject->save();
             $this->cues[] = $cueObject;
         }
+        $this->output->progressFinish();
 
         // loops on cues and creates new conversation when needed
         $newConversation = true;
@@ -189,9 +192,11 @@ class ImportMovie extends Command
         $strlen = 0;
         $score = 0;
         $i=0;
+        $this->info('Finding conversations...');
+        $this->output->progressStart(count($this->subrip->getCues()));
         foreach($this->cues as $cue) {
+            $this->output->progressAdvance();
             $i++;
-            echo "Finding conversation for cue #$i\n";
             if($i==1) {
                 $currentConversation = new SubtitleConversation();
                 $currentConversation->subtitle_id = $subtitleObj->id;
@@ -277,8 +282,10 @@ class ImportMovie extends Command
             }
 
         }
+        $this->output->progressFinish();
 
         // computes subtitle score
+        $this->info('Calculating movie score...');
         $cword80 = $subtitleObj->findCovering(90);
 
         // loops through conversation to score them
@@ -287,15 +294,18 @@ class ImportMovie extends Command
         $conversationReadingSpeed = 0;
         $countConversations= count($this->conversations);
         $i=0;
+        $this->info('Calculating conversations scores...');
+        $this->output->progressStart(count($this->subrip->getCues()));
         foreach($this->conversations as $conversation) {
+            $this->output->progressAdvance();
             $i++;
-            echo "Find score for cword $cword80 in conversation #$i\n";
             // finds how much you can read with these words
             $conversation->score = $conversation->findScore($cword80);
             $conversation->save();
             $conversationScore[] = $conversation->score;
             $conversationStrlen[] = $conversation->strlen;
         }
+        $this->output->progressFinish();
 
         // mean reading speed from cues
         $meanReadingSpeed = array();
@@ -328,6 +338,7 @@ class ImportMovie extends Command
         $movieObj->is_pending = false;
         $movieObj->is_active = true;
         $movieObj->save();
+        $this->info('Done. The movie is now set active.');
     }
 
     protected function regroupLines($lines) {

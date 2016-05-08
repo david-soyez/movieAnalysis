@@ -187,7 +187,7 @@ LIMIT 20000');
 
         $words = array_slice($words,0,$this->cword_80,true);
 
-        return DB::select('SELECT ifnull(w2.value,words.value) as value,subtitle_words.frequence FROM subtitle_words  INNER JOIN words ON words.id = subtitle_words.word_id LEFT JOIN words as w2 ON w2.id = words.lemma_word_id where (words.id IN ('.implode(',',array_keys($words)).') OR w2.id IN ('.implode(',',array_keys($words)).')) AND subtitle_id = '.$this->id.' order by words.frequence_spoken desc,words.frequence_written desc,words.dispersion desc,words.range desc');
+        return DB::select('SELECT ifnull(w2.value,words.value) as value,subtitle_words.frequence FROM subtitle_words  INNER JOIN words ON words.id = subtitle_words.word_id INNER JOIN words as w2 ON w2.id = words.lemma_word_id where (words.id IN ('.implode(',',array_keys($words)).') OR w2.id IN ('.implode(',',array_keys($words)).')) AND subtitle_id = '.$this->id.' order by words.frequence_spoken desc,words.frequence_written desc,words.dispersion desc,words.range desc');
     }
 }
 

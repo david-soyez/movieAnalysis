@@ -35,12 +35,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/david-soyez/captioning.git",
-                "reference": "fac22b1b1521311790ab5f4f807134f2ceb02f74"
+                "reference": "c6d132b9dd445e0ff183effb486e006bce91c5cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/david-soyez/captioning/zipball/fac22b1b1521311790ab5f4f807134f2ceb02f74",
-                "reference": "fac22b1b1521311790ab5f4f807134f2ceb02f74",
+                "url": "https://api.github.com/repos/david-soyez/captioning/zipball/c6d132b9dd445e0ff183effb486e006bce91c5cc",
+                "reference": "c6d132b9dd445e0ff183effb486e006bce91c5cc",
                 "shasum": ""
             },
             "require": {
@@ -80,7 +80,7 @@
             "support": {
                 "source": "https://github.com/david-soyez/captioning/tree/master"
             },
-            "time": "2016-05-07 19:40:06"
+            "time": "2016-05-08 16:37:35"
         },
         {
             "name": "classpreloader/classpreloader",
