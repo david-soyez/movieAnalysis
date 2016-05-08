@@ -173,7 +173,7 @@ ORDER BY
  w1.frequence_spoken desc, w2.frequence_spoken desc,w1.frequence_written DESC, w2.frequence_written DESC, w1.dispersion desc, w2.dispersion desc, w1.range desc,
  w2.range desc
 
-LIMIT '.$this->cword_80);
+LIMIT 20000');
 
 
         $_words = array();
