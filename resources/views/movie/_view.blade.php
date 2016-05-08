@@ -36,7 +36,7 @@ $totalWords = $subtitle->getWordsCount();
                     <ul>
                     <li>Dialogues: {{ count($subtitle->conversations) }}</li>
                     <li>Unique words: {{ $uniqueWords }}</li>
-                    <li>Vocabulary for 90%: {{ $subtitle->cword_80 }} words</li>
+                    <li>90% of the movie is dispersed in the range of the {{ $subtitle->cword_80 }} most used words of the language</li>
                     <li>Dialogue comprehension deviation: {{ round($subtitle->std_score,2) }}%</li>
                     <li>Bad words: {{ $subtitle->count_badwords }}</li>
                     <li>Contractions: {{ $subtitle->count_contractions }}</li>
@@ -55,22 +55,6 @@ $totalWords = $subtitle->getWordsCount();
               </div>
             </div>
           </section>   
-
-          <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
-            <div class="mdl-card mdl-cell mdl-cell--12-col">
-              <div class="mdl-card__supporting-text">
-                <h4>Vocabulary for 90%</h4>
-                <pre>
-                    <?php $wordsCount = 0; ?>
-                @foreach($subtitle->getVocabulary(90) as $word)
-                    <?php $wordsCount += $word->frequence; ?>
-                    {{ floor(($wordsCount*100)/$totalWords) }}% -> {{ $word->value }} ({{ $word->frequence }}x)
-                @endforeach
-                </pre>
-              </div>
-            </div>
-          </section>   
-
 <script>
 google.charts.load('current', {packages: ['corechart', 'line']});
 google.charts.setOnLoadCallback(drawRare{{ $movie->id}});
