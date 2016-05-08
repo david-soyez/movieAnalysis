@@ -151,6 +151,18 @@ class ImportMovie extends Command
             $cueObject->timeline_end = $cue->getStopMS();
             $cueObject->caption = $cue->getStrippedText(true);
             $cueObject->caption = trim(preg_replace('#\([^\)]*\)#',' ',$cueObject->caption));
+
+            // do not take ads
+            var_dump($cueObject->caption);
+            if($cueObject->caption == '' || stripos($cueObject->caption,'opensubtitle')!== false ||
+                (stripos($cueObject->caption, 'rate')!== false && stripos($cueObject->caption, 'subtitle')!== false) 
+                || ($i >= count($this->subrip->getCues())-3 && stripos($cueObject->caption,'made by')!== false)
+                || ($i >= count($this->subrip->getCues())-3 && stripos($cueObject->caption,'rate')!== false)
+                || ($i >= count($this->subrip->getCues())-3 && stripos($cueObject->caption,'support')!== false)
+            ) {
+                continue;
+            } 
+
             $cueObject->readingspeed = $cue->getReadingSpeed();
             if($cueObject->readingspeed > 100) {
                 $cueObject->readingspeed = 20;
@@ -160,15 +172,7 @@ class ImportMovie extends Command
             $cueObject->addWordsFrequences();
             //$cueObject->score = $cueObject->findCovering(80);
 
-            // do not take ads
-            if($cueObject->caption == '' || stripos($cueObject->caption,'opensubtitle')!== false ||
-                (stripos($cueObject->caption, 'rate')!== false && stripos($cueObject->caption, 'subtitle')!== false) 
-                || ($i >= count($this->subrip->getCues())-3 && stripos($cueObject->caption,'made by')!== false)
-                || ($i >= count($this->subrip->getCues())-3 && stripos($cueObject->caption,'rate')!== false)
-                || ($i >= count($this->subrip->getCues())-3 && stripos($cueObject->caption,'support')!== false)
-            ) {
-                continue;
-            } 
+
 
             
             $cueObject->save();
