@@ -11,7 +11,7 @@
                 {{ $movie->overview}}
               </div>
               <div class="mdl-card__actions">
-                <a href="/movie/{{ $movie->id}}/{{ $movie->title}#" class="mdl-button">Show details</a>
+                <a href="/movie/{{ $movie->id}}/{{ $movie->title}}" class="mdl-button">Show details</a>
               </div>
             </div>
           </section>

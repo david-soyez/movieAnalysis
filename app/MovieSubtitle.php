@@ -108,6 +108,10 @@ LIMIT 100000');
         return $n;
     }
 
+    public function getWordsCount() {
+       return DB::select('select sum(frequence) as total from subtitle_words where subtitle_id = '.$this->id)[0]->total; 
+    }
+
     /*
      * Returns n hard word with their frequences or <=0 for all
      * @return array
@@ -147,4 +151,43 @@ LIMIT '.$this->cword_80);
         return DB::select('SELECT * FROM subtitle_words  INNER JOIN words ON words.id = subtitle_words.word_id where words.id NOT IN ('.implode(',',array_keys($words)).') AND subtitle_id = '.$this->id.' order by words.frequence_spoken asc,words.frequence_written asc,words.dispersion asc,words.range asc '.$limit);
     }
 
+    public function getHardest($limit=1) {
+        $res = DB::select('SELECT subtitle_conversations.*, (count_words*(100-score))/100 as note FROM subtitle_conversations  where subtitle_id = '.$this->id.' order by  note desc limit '.$limit);
+        if($limit==1)
+            return $res[0];
+        else 
+            return $res;
+    }
+
+    public function getVocabulary() {
+        $words= DB::select('
+SELECT 
+     w1.id AS id1, w2.id AS id2,w1.value AS value1, w2.value AS value2
+FROM
+    paretobook.words AS w1
+        LEFT JOIN
+    words AS w2 ON w1.id = w2.lemma_word_id
+where isnull(w1.lemma_word_id)    
+ORDER BY 
+
+ w1.frequence_spoken desc, w2.frequence_spoken desc,w1.frequence_written DESC, w2.frequence_written DESC, w1.dispersion desc, w2.dispersion desc, w1.range desc,
+ w2.range desc
+
+LIMIT '.$this->cword_80);
+
+
+        $_words = array();
+        foreach($words as $word) {
+            if(!empty($word->id2)) {
+                $_words[$word->id2] = true;
+            }
+                $_words[$word->id1] = true;
+        }
+        $words = $_words;
+
+        $words = array_slice($words,0,$this->cword_80,true);
+
+        return DB::select('SELECT words.value,subtitle_words.frequence FROM subtitle_words  INNER JOIN words ON words.id = subtitle_words.word_id where (words.id IN ('.implode(',',array_keys($words)).') OR words.lemma_word_id IN ('.implode(',',array_keys($words)).')) AND subtitle_id = '.$this->id.' order by words.frequence_spoken desc,words.frequence_written desc,words.dispersion desc,words.range desc');
+    }
 }
+

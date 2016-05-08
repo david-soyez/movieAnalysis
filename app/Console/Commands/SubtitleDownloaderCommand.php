@@ -80,7 +80,7 @@ class SubtitleDownloaderCommand extends Command
             }
 
             $best = null;
-            if(false) {
+            if(true) {
                 foreach($subs as $sub) {
                     if(!empty($best) && $best['downloads']< $sub['downloads'] && $sub['lang'] == $lang) {
                        $best = $sub; 

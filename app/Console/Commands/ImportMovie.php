@@ -150,6 +150,7 @@ class ImportMovie extends Command
             $cueObject->timeline_start = $cue->getStartMS();
             $cueObject->timeline_end = $cue->getStopMS();
             $cueObject->caption = $cue->getStrippedText(true);
+            $cueObject->caption = trim(preg_replace('#\([^\)]*\)#',' ',$cueObject->caption));
             $cueObject->readingspeed = $cue->getReadingSpeed();
             if($cueObject->readingspeed > 100) {
                 $cueObject->readingspeed = 20;
@@ -160,7 +161,7 @@ class ImportMovie extends Command
             //$cueObject->score = $cueObject->findCovering(80);
 
             // do not take ads
-            if(stripos($cueObject->caption,'opensubtitle')!== false ||
+            if($cueObject->caption == '' || stripos($cueObject->caption,'opensubtitle')!== false ||
                 (stripos($cueObject->caption, 'rate')!== false && stripos($cueObject->caption, 'subtitle')!== false) 
                 || ($i >= count($this->subrip->getCues())-3 && stripos($cueObject->caption,'made by')!== false)
                 || ($i >= count($this->subrip->getCues())-3 && stripos($cueObject->caption,'rate')!== false)

@@ -1,6 +1,9 @@
 /vendor
 /node_modules
 /public/components/
+/public/images/posters/*
+/public/images/backdrops/*
+/storage/opensubtitles/*
 Homestead.yaml
 Homestead.json
 .env

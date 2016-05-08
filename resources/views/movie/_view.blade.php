@@ -1,6 +1,75 @@
-<?php $conversations = $movie->subtitle()->conversations;
+<?php 
+$subtitle = $movie->subtitle();
+$conversations = $subtitle->conversations;
+$hardestDialogue = $subtitle->getHardest();
+$uniqueWords = count($subtitle->words);
+$totalWords = $subtitle->getWordsCount();
 ?>
-  <div id="chart_divRare{{ $movie->id}}" style="height:400px"></div>
+          <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+            <header class="section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white">
+                <img src="/images/posters/{{ $movie->poster_path}}" width="215px"> 
+            </header>
+            <div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
+              <div class="mdl-card__supporting-text">
+
+<h4>{{ $movie->title }}
+        <span class="preview_movie_rate"><i class="material-icons">hearing</i>{{ $movie->subtitle()->cword_80}}</span>
+</h4>
+                {{ $movie->overview}}
+              </div>
+            </div>
+          </section>          
+
+          <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+            <div class="mdl-card mdl-cell mdl-cell--12-col">
+              <div class="mdl-card__supporting-text">
+                <h4>Dialogue Chart</h4>
+                  <div id="chart_divRare{{ $movie->id}}" style="height:400px">Loading...</div>
+              </div>
+            </div>
+          </section>   
+
+          <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+            <div class="mdl-card mdl-cell mdl-cell--12-col">
+              <div class="mdl-card__supporting-text">
+                <h4>Stats</h4>
+                    <ul>
+                    <li>Dialogues: {{ count($subtitle->conversations) }}</li>
+                    <li>Unique words: {{ $uniqueWords }}</li>
+                    <li>Vocabulary for 90%: {{ $subtitle->cword_80 }} words</li>
+                    <li>Dialogue comprehension deviation: {{ round($subtitle->std_score,2) }}%</li>
+                    <li>Bad words: {{ $subtitle->count_badwords }}</li>
+                    <li>Contractions: {{ $subtitle->count_contractions }}</li>
+                    </ul>
+              </div>
+            </div>
+          </section>             
+
+          <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+            <div class="mdl-card mdl-cell mdl-cell--12-col">
+              <div class="mdl-card__supporting-text">
+                <h4>Most challenging dialogue ({{ $hardestDialogue->count_words }} words - {{ floor($hardestDialogue->score) }} % comprehension)</h4>
+                    <pre>
+                    {{ $hardestDialogue->caption }}
+                    </pre>
+              </div>
+            </div>
+          </section>   
+
+          <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+            <div class="mdl-card mdl-cell mdl-cell--12-col">
+              <div class="mdl-card__supporting-text">
+                <h4>Vocabulary for 90%</h4>
+                <pre>
+                    <?php $wordsCount = 0; ?>
+                @foreach($subtitle->getVocabulary(90) as $word)
+                    <?php $wordsCount += $word->frequence; ?>
+                    {{ floor(($wordsCount*100)/$totalWords) }}% -> {{ $word->value }} ({{ $word->frequence }}x)
+                @endforeach
+                </pre>
+              </div>
+            </div>
+          </section>   
 
 <script>
 google.charts.load('current', {packages: ['corechart', 'line']});

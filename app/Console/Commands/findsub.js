@@ -17,7 +17,7 @@ OpenSubtitles.search({
 //        season: s,
  //       episode: ep,
         imdbid: imdbid,
-        limit: 'best',
+        limit: 'all',
         sublanguageid: lang
 })
 .then(function (subtitles) {
