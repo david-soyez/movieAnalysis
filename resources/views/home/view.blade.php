@@ -5,7 +5,7 @@
             <div class="mdl-card mdl-cell mdl-cell--12-col">
               <div class="mdl-card__supporting-text">
                 <h4>What is this website?</h4>
-                This website is an attempt to classify the difficulty behind the understanding of english movies when learning the language.
+                This website is an attempt to classify the difficulty behind the understanding of english movies when learning the language. The score shows the level of vocabulary you should have to understand 90% of the movie. Every movies are compared to the same vocabulary levels.
               </div>
               <div class="mdl-card__actions">
                 <a href="#" class="mdl-button">Read more</a>
