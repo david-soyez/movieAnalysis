@@ -17,6 +17,7 @@ class CreateMovieTable extends Migration
             $table->integer('user_id')->nullable();
             $table->integer('tmdb_id')->nullable();
             $table->string('imdb_id')->nullable();
+            $table->decimal('level',10,6)->nullable();
             $table->string('poster_path')->nullable();
             $table->text('overview')->nullable();
             $table->date('release_date')->nullable();

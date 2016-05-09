@@ -17,7 +17,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $moviesObj= Movie::where(array('is_active'=>true,'is_pending'=>false,'is_deleted'=>false))->get();
+        $moviesObj= Movie::where(array('movies.is_active'=>true,'movies.is_pending'=>false,'movies.is_deleted'=>false))
+        ->orderBy('level','asc')     
+        ->get();
+
 
         return view('home.view', ['movies' => $moviesObj]);
     }    

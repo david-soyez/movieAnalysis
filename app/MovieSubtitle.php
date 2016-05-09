@@ -60,7 +60,7 @@ ORDER BY
  w1.frequence_spoken desc, w2.frequence_spoken desc,w1.frequence_written DESC, w2.frequence_written DESC, w1.dispersion desc, w2.dispersion desc, w1.range desc,
  w2.range desc
 
-LIMIT 100000');
+LIMIT 200000');
 
         $sumSub = 0;
         $wordsSub = array();
@@ -93,6 +93,9 @@ LIMIT 100000');
         }
         $words = $_words;
 
+        $percentages = array();
+        $incPercent = 1;
+
         // finds the row number in $words
         $n = 0;
         foreach($words as $id => $word) {
@@ -101,11 +104,19 @@ LIMIT 100000');
                 $sum += $wordsSub[$id];
             }
             $percent_material = ($sum*100)/$sumSub;
-            if($percent_material >= $coverPercent)
+            if($percent_material >= $incPercent && !isset($percentages[$incPercent])) {
+                $percentages[$incPercent] = $n;
+                $incPercent += 1;
+            }
+            if($percent_material >= $coverPercent) {
+                $percentages[$coverPercent] = $n;
                break;
+            }
         }
+        $this->cword = json_encode($percentages);
+        $this->save();
 
-        return $n;
+        return $percentages['95'] - $percentages['80'];
     }
 
     public function getWordsCount() {
@@ -189,5 +200,25 @@ LIMIT 20000');
 
         return DB::select('SELECT ifnull(w2.value,words.value) as value,subtitle_words.frequence FROM subtitle_words  INNER JOIN words ON words.id = subtitle_words.word_id INNER JOIN words as w2 ON w2.id = words.lemma_word_id where (words.id IN ('.implode(',',array_keys($words)).') OR w2.id IN ('.implode(',',array_keys($words)).')) AND subtitle_id = '.$this->id.' order by words.frequence_spoken desc,words.frequence_written desc,words.dispersion desc,words.range desc');
     }
-}
+
+
+    public function getLevel() {
+        $hardestSub = MovieSubtitle::where(array())->orderBy('cword_80','desc')->first();
+
+        $devi1 = $this->sd(json_decode($hardestSub->cword,true)); 
+        $devi2 = $this->sd(json_decode($this->cword,true)); 
+
+        return (($devi2)*10)/($devi1);
+        //return (($this->cword_80/15)*10)/($hardestSub->cword_80/15);
+    }
+    // Function to calculate square of value - mean
+    function sd_square($x, $mean) { 
+        return pow($x - $mean,2); 
+    }
+
+    // Function to calculate standard deviation (uses sd_square)    
+    function sd($array) {
+        // square root of sum of squares devided by N-1
+        return sqrt(array_sum(array_map(array($this,"sd_square"), $array, array_fill(0,count($array), (array_sum($array) / count($array)) ) ) ) / (count($array)-1) );
+    }}
 

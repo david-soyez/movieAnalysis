@@ -19,6 +19,7 @@ class CreateMovieSubtitle extends Migration
             $table->string('language');
             $table->boolean('is_processed')->default(0);
             $table->integer('cword_80')->nullable();
+            $table->text('cword')->nullable();
             $table->decimal('sum_score',17,9)->nullable();
             $table->decimal('mean_score',17,9)->nullable();
             $table->decimal('std_score',17,9)->nullable();

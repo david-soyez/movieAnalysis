@@ -69,8 +69,12 @@ class ImportMovie extends Command
             $this->error('No pending subtitle.');
             die();
         }
+        SubtitleCue::where(array('subtitle_id'=>$subtitleObj->id))->delete();
+        SubtitleConversation::where(array('subtitle_id'=>$subtitleObj->id))->delete();
 
-        $this->info($subtitleObj->title);
+        // loads the movie in database
+        $movieObj = $subtitleObj->movie;
+        $this->info($movieObj->title);
 
         bcscale(14);
  
@@ -106,8 +110,6 @@ class ImportMovie extends Command
             die('error opening subtitle. exiting.');
         }
 
-        // loads the movie in database
-        $movieObj = $subtitleObj->movie;
 
 
         // regroups the lines in every cues to remove unecessary line breaks
@@ -286,7 +288,7 @@ class ImportMovie extends Command
 
         // computes subtitle score
         $this->info('Calculating movie score...');
-        $cword80 = $subtitleObj->findCovering(90);
+        $cword80 = $subtitleObj->findCovering(95);
 
         // loops through conversation to score them
         $conversationScore = array();
@@ -337,7 +339,16 @@ class ImportMovie extends Command
         // set the movie active
         $movieObj->is_pending = false;
         $movieObj->is_active = true;
+        $movieObj->level = $subtitleObj->getLevel();
         $movieObj->save();
+
+        // update movie levels
+        $moviesObj= Movie::where(array('movies.is_active'=>true,'movies.is_pending'=>false,'movies.is_deleted'=>false))->get();
+        foreach($moviesObj as $movie) {
+            $movie->level = $movie->subtitle()->getLevel();
+            $movie->save();
+        }
+
         $this->info('Done. The movie is now set active.');
     }
 
