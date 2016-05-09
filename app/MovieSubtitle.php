@@ -207,11 +207,11 @@ LIMIT 20000');
 
         $devi1 = $this->sd(json_decode($hardestSub->cword,true)); 
         $devi2 = $this->sd(json_decode($this->cword,true)); 
-        $scoreWords = (($this->cword_80/15)*20)/($hardestSub->cword_80/15);
-        $scoreLength = (($this->getWordsCount())*10)/($hardestSub->getWordsCount());
+        $scoreWords = (($this->cword_80/15)*80)/($hardestSub->cword_80/15);
+        $scoreLength = (($this->getWordsCount())*20)/($hardestSub->getWordsCount());
         
         //return (($devi2)*10)/($devi1);
-        return ($scoreWords+$scoreLength*10)/40;
+        return ($scoreWords+$scoreLength*10)/100;
     }
     // Function to calculate square of value - mean
     function sd_square($x, $mean) { 
