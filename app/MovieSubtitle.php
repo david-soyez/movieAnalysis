@@ -213,7 +213,7 @@ LIMIT 20000');
 
         $devi1 = $this->sd(json_decode($hardestWord->cword,true)); 
         $devi2 = $this->sd(json_decode($this->cword,true)); 
-        $scoreWords = (($this->cword_80/15)*80)/($hardestWord->cword_80/15);
+        $scoreWords = (($this->cword_80)*80)/($hardestWord->cword_80);
         $scoreLength = (($this->getWordsCount())*20)/($hardestCount);
 
         //return (($devi2)*10)/($devi1);
