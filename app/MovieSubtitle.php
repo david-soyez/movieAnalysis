@@ -205,29 +205,35 @@ LIMIT 20000');
         return DB::select('SELECT ifnull(w2.value,words.value) as value,subtitle_words.frequence FROM subtitle_words  INNER JOIN words ON words.id = subtitle_words.word_id INNER JOIN words as w2 ON w2.id = words.lemma_word_id where (words.id IN ('.implode(',',array_keys($words)).') OR w2.id IN ('.implode(',',array_keys($words)).')) AND subtitle_id = '.$this->id.' order by words.frequence_spoken desc,words.frequence_written desc,words.dispersion desc,words.range desc');
     }
 
-
-    public function getLevel() {
+    public function getWordsLevel() {
         $hardestWord = MovieSubtitle::where(array())->orderBy('cword_80','desc')->first();
-        $mostCountWord = DB::select('SELECT sum(frequence) as nb, subtitle_id FROM subtitle_words group by subtitle_id order by nb desc limit 1');
-        $mostMeanConversation = DB::select('SELECT sum(count_words)/count(*) as nb, subtitle_id FROM subtitle_conversations group by subtitle_id order by nb desc limit 1');
+        return (($this->cword_80)*10)/($hardestWord->cword_80);
+    }
 
+    public function getSumWordsLevel() {
+        $mostCountWord = DB::select('SELECT sum(frequence) as nb, subtitle_id FROM subtitle_words group by subtitle_id order by nb desc limit 1');
         if(!empty($mostCountWord)) {
             $hardestCount = $mostCountWord[0]->nb;
         } else {
             $hardestCount = 1;
         }
+        return (($this->getWordsCount())*10)/($hardestCount);
+    }
 
+    public function getMeanCountWordConversationLevel() {
+        $mostMeanConversation = DB::select('SELECT sum(count_words)/count(*) as nb, subtitle_id FROM subtitle_conversations group by subtitle_id order by nb desc limit 1');
         if(!empty($mostMeanConversation)) {
             $hardestMean = $mostMeanConversation[0]->nb;
         } else {
             $hardestMean = 1;
         }
-
-        $devi1 = $this->sd(json_decode($hardestWord->cword,true)); 
-        $devi2 = $this->sd(json_decode($this->cword,true)); 
-        $scoreWords = (($this->cword_80)*70)/($hardestWord->cword_80);
-        $scoreLength = (($this->getWordsCount())*10)/($hardestCount);
-        $scoreMeanConversation = (($this->getMeanWordConversation())*20)/($hardestMean);
+        return (($this->getMeanWordConversation())*10)/($hardestMean);
+    }
+    
+    public function getLevel() {
+        $scoreWords = $this->getWordsLevel()*7;
+        $scoreLength = $this->getSumWordsLevel();
+        $scoreMeanConversation = $this->getMeanCountWordConversationLevel()*2;
 
         //return (($devi2)*10)/($devi1);
         return (($scoreWords+$scoreLength+$scoreMeanConversation)*10)/100;
