@@ -103,6 +103,7 @@ class ImportMovie extends Command
             die();
         }
 
+
         if(empty($this->subrip)) {
             $subtitleObj->is_error = true;
             $subtitleObj->code_error = 'error opening file empty';
@@ -110,7 +111,13 @@ class ImportMovie extends Command
             die('error opening subtitle. exiting.');
         }
 
-
+        // if too short
+        if($this->subrip->getCuesCount() < 250) {
+            $subtitleObj->is_error = true;
+            $subtitleObj->code_error = 'There are only '.$this->subrip->getCuesCount().' cues.';
+            $subtitleObj->save();
+            die('There are only '.$this->subrip->getCuesCount().' cues.');
+        }
 
         // regroups the lines in every cues to remove unecessary line breaks
         $this->info('Grouping multi-lines in cues...');
