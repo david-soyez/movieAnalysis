@@ -13,8 +13,15 @@ $totalWords = $subtitle->getWordsCount();
               <div class="mdl-card__supporting-text">
 
 <h4>{{ $movie->title }}
-        <span class="preview_movie_rate"><i class="material-icons">hearing</i>Level {{ round($movie->subtitle()->getLevel(),1) }}</span>
+        <span class="preview_movie_rate"></span>
 </h4>
+<p>
+<h5>Level <i class="material-icons">hearing</i>{{ round($movie->subtitle()->getLevel(),1) }}</h5>
+Words: {{ round($subtitle->getWordsLevel(),1) }}/10</br>
+Dialogue: {{ round($subtitle->getMeanCountWordConversationLevel(),1) }}/10</br>
+Length: {{ round($subtitle->getSumWordsLevel(),1) }}/10</br>
+</p>
+Overview:<br/>
                 {{ $movie->overview}}
               </div>
             </div>
