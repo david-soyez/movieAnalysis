@@ -208,8 +208,8 @@ LIMIT 20000');
         $devi1 = $this->sd(json_decode($hardestSub->cword,true)); 
         $devi2 = $this->sd(json_decode($this->cword,true)); 
 
-        return (($devi2)*10)/($devi1);
-        //return (($this->cword_80/15)*10)/($hardestSub->cword_80/15);
+        //return (($devi2)*10)/($devi1);
+        return (($this->cword_80/15)*10)/($hardestSub->cword_80/15);
     }
     // Function to calculate square of value - mean
     function sd_square($x, $mean) { 
