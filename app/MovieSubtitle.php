@@ -116,7 +116,7 @@ LIMIT 200000');
         $this->cword = json_encode($percentages);
         $this->save();
 
-        return $percentages['95'] - $percentages['80'];
+        return $percentages['90'] - $percentages['80'];
     }
 
     public function getWordsCount() {
