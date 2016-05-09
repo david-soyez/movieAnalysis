@@ -6,7 +6,7 @@
               <div class="mdl-card__supporting-text">
 
 <h4><a class="movie_preview_title_rate" id="movie_{{ $movie->id}}" href="/movie/{{ $movie->id}}/{{ $movie->title}}" title="{{ $movie->title }}" alt="{{ $movie->title }}">{{ $movie->title }}</a>
-        <span class="preview_movie_rate">Level <i class="material-icons">hearing</i>{{ round($movie->subtitle()->getLevel(),1) }}</span>
+        <span class="preview_movie_rate">Level <i class="material-icons">hearing</i>{{ round($movie->subtitle()->getLevel(),1) }}/10</span>
 </h4>
                 {{ $movie->overview}}
               </div>

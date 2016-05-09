@@ -16,7 +16,7 @@ $totalWords = $subtitle->getWordsCount();
         <span class="preview_movie_rate"></span>
 </h4>
 <p>
-<h5>Level <i class="material-icons">hearing</i>{{ round($movie->subtitle()->getLevel(),1) }}</h5>
+<h5>Level <i class="material-icons">hearing</i>{{ round($movie->subtitle()->getLevel(),1) }}/10</h5>
 Words: {{ round($subtitle->getWordsLevel(),1) }}/10</br>
 Dialogue: {{ round($subtitle->getMeanCountWordConversationLevel(),1) }}/10</br>
 Length: {{ round($subtitle->getSumWordsLevel(),1) }}/10</br>
