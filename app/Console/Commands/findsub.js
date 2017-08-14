@@ -9,7 +9,7 @@ var lang = process.argv[3];
 
 /** HTTPS search **/
 var OpenSubtitles = new OS({
-        useragent: 'OSTestUserAgent',
+        useragent: 'OSTestUserAgentTemp',
         endpoint: 'https://api.opensubtitles.org:443/xml-rpc'
 });
 
